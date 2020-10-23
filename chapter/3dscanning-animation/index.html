@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html>
+
+  ﻿<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>3D Scanning and Animation</title>
+    <meta name="description" content="The Open Augmented Reality Teaching Book">
+
+    <link rel="stylesheet" href="/ar-for-eu-book/css/main.css">
+    <link rel="canonical" href="https://klamma.github.io/ar-for-eu-book/chapter/3dscanning-animation/">
+    <link rel="alternate" type="application/rss+xml" title="The Open Augmented Reality Teaching Book" href="https://klamma.github.io/ar-for-eu-book/feed.xml">
+
+    <!-- Favicon head tag -->
+    <link rel="shortcut icon" href="/ar-for-eu-book/favicon.ico" type="image/x-icon">
+
+    <!-- Visualization Libraries -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+    <!-- formula rendering -->
+    <script type="text/javascript" async
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/ar-for-eu-book/">The Open Augmented Reality Teaching Book</a>
+
+    <nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </a>
+
+      <div class="trigger">
+	  <a class="page-link" href="https://codereality.net/">Code Reality</a>
+          <a class="page-link" href="/ar-for-eu-book/posts">Blog Posts</a>
+          <a class="page-link" href="/ar-for-eu-book/toc">Table of Content</a>
+          <a class="page-link" href="/ar-for-eu-book/references">Bibliography</a>
+          <a class="page-link" href="/ar-for-eu-book/contrib">Contributors</a>
+          <a class="page-link" href="/ar-for-eu-book/about">About</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">3D Scanning and Animation</h1>
+  </header>
+
+  <div class="post-content">
+    
+<p>This tutorial will familiarize you with 3D scanning and animation. We will work on constructing a 3D character, including the steps of obtaining a 3D scan of a human, converting it into a low-polygonal 3D model, cleaning the data (both 3D models and textures), and animating it to be ready for an Augmented Reality application.</p>
+
+<h2 id="contents">Contents</h2>
+<ul>
+  <li><a href="#part-1-3D-scanning">Part 1. 3D scanning</a></li>
+  <li><a href="#part-2-wrap">Part 2. Converting a 3D scan into a low-polygonal 3D model with R3DS Wrap</a></li>
+  <li><a href="#part-3-maya">Part 3. Polishing the model in Maya</a></li>
+  <li><a href="#part-4-photoshop">Part 4. Polishing the texture in Photoshop</a></li>
+  <li><a href="#part-5-mixamo">Part 5. Character animation with Mixamo</a></li>
+  <li><a href="#part-6-unity">Part 6. Importing a character into Unity 3D and animating it</a></li>
+</ul>
+
+<h2 id="materials">Materials</h2>
+
+<ul>
+  <li>Example 3D scan of a human (<a href="../../assets/supplementary_material/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning-example-scan.zip">download</a>) - result of Part 1.</li>
+  <li>Example 3D character model with a polished texture (<a href="../../assets/supplementary_material/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning-example-character.zip">download</a>) - result of Part 3 and Part 4.</li>
+</ul>
+
+<h2 id="hardware">Hardware</h2>
+<ul>
+  <li><a href="https://www.apple.com/ipad/">iPad</a></li>
+  <li><a href="https://structure.io/">Structure Sensor</a></li>
+</ul>
+
+<h2 id="software">Software</h2>
+<ul>
+  <li><a href="https://itseez3d.com/">ItSeez3D</a></li>
+  <li><a href="https://sketchfab.com/">Sketchfab</a></li>
+  <li><a href="https://www.russian3dscanner.com/">R3DS Wrap</a></li>
+  <li><a href="https://www.autodesk.com/products/maya/overview">Autodesk Maya</a></li>
+  <li><a href="https://www.adobe.com/products/photoshop.html">Adobe Photoshop</a></li>
+  <li><a href="https://www.mixamo.com/">Mixamo</a></li>
+  <li><a href="https://unity.com/">Unity 3D</a></li>
+</ul>
+
+<h2 id="video-tutorial">Video Tutorial</h2>
+
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/v9JRPFCBu-s" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+
+<h2 id="part-1-3D-scanning">Part 1. 3D Scanning</h2>
+
+<p>3D scanning is the process of analyzing a real-world object or environment to collect data on its shape and color to construct a 3D model. More detail is described in <a href="https://www.researchgate.net/profile/Fridolin_Wild/publication/337985851_A_Process_for_the_Semi-Automated_Generation_of_Life-Sized_Interactive_3D_Character_Models_for_Holographic_Projection/links/5df8fa914585159aa484d1d8/A-Process-for-the-Semi-Automated-Generation-of-Life-Sized-Interactive-3D-Character-Models-for-Holographic-Projection.pdf">Huang, Wild, Twycross (2019)</a>.</p>
+
+<p>In this tutorial, we will build an animated model of a character that can be used in an Augmented Reality application. We suggest using a technology that combines depth sensing and color and requires specific hardware <a href="https://structure.io/">Structure sensor</a>. However, a 3D model can be made by 3D scanning using other technologies, for example, with more accessible methods of photogrammetry (like with your smartphone and a free version of <a href="https://www.3dflow.net/">3DF Zephyr</a>).</p>
+
+<p><strong><em>Note:</em></strong> <em>If you want to skip the 3D scanning part of the tutorial, you can download an example 3D scan of a human (<a href="../../assets/supplementary_material/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning-example-scan.zip">download</a>) that we made with a Structure sensor.</em></p>
+
+<p>In this tutorial, we use the first version of the Structure hardware “Sensor” that is built for iPad. The newer version “Core” is multiplatform. The workflow for 3D scanning with structure sensor is the following:</p>
+
+<p><strong>Step 1.1:</strong> Download <a href="https://itseez3d.com/">ItSeez3D</a> in your iPad, Sign in/Log in to itSeez3D &amp; <a href="https://sketchfab.com/">Sketchfab</a>.</p>
+
+<p><strong>Step 1.2:</strong> Open ItSeez3D and choose the type of scan you would like to perform (choose a human for this tutorial).</p>
+
+<p><strong>Step 1.3:</strong> Scan the person quickly from top to bottom.</p>
+
+<p><strong>Step 1.4:</strong> Open Sketchfab &gt; your account &gt; My settings &gt; Password &amp; API &gt; copy API token.</p>
+
+<p><strong>Step 1.5:</strong> Open itSeez3D &gt; click your scan &gt; export &gt; past API token.</p>
+
+<p><strong>Step 1.6:</strong> Now you should be able to check your scans in the Sketchfab cloud platform and download it (for example as an OBJ file).</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Fig00.jpg" alt="3D Scanning with Structure Sensor" /></p>
+
+<h2 id="part-2-wrap">Part 2. Converting the 3D scan into a low-polygonal 3D model with R3DS Wrap</h2>
+
+<p>The 3D model of a human actor that we obtained by 3D scanning is complex and contains a high number of polygons. Therefore, it needs to be further processed before it can be used in real-time interactions in an Augmented Reality application.</p>
+
+<p>In this phase of the tutorial, we will use a software tool <a href="https://www.russian3dscanner.com/">R3DS Wrap</a> to convert a 3D-scanned model of an actor to production-ready characters sharing the same topology and texture coordinates. Such conversion requires the 3D-scanned model to be first manually wrapped around a known topology. Wrap will then automatically transform from the high-polygon model to a low-polygon mesh with textures.</p>
+
+<p>The main Wrap UI consists of four tabs:</p>
+
+<ul>
+  <li>Viewport3D - shows the 3D view</li>
+  <li>Viewpoint2D - shows the 2D texture</li>
+  <li>Visual editor used for transformation</li>
+  <li>Gallery contains a library of low-polygon models</li>
+</ul>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Fig01.png" alt="Wrap UI" /></p>
+
+<p>The node graph editor in the top right corner of the screen is used to create and manage scene components that are visualized as nodes in this window. The context menu of the Node graph editor can be started by pressing the Tab key.</p>
+
+<p>Handy controls:</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>Alt + LMB</strong></td>
+      <td>Rotate viewpoint</td>
+    </tr>
+    <tr>
+      <td><strong>Alt + MMB</strong></td>
+      <td>Move viewpoint</td>
+    </tr>
+    <tr>
+      <td><strong>Alt + RMB</strong></td>
+      <td>Zoom in/out</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Let’s get started!</p>
+
+<p><strong>Step 2.1:</strong> Open Wrap &gt; Gallery &gt; select “Body” in the Basemeshes section</p>
+
+<p><strong>Step 2.2:</strong> Observe that in the Node graph editor (in the top right corner of the screen), a new node will appear. In our tutorial, we rename it Basemesh.</p>
+
+<p><strong>Step 2.3:</strong> Import 3D scan (1/2). In the Node graph editor, press Tab &gt; Geometry &gt; LoadGeom</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Wrap_03.PNG" alt="Wrap Node graph editor LoadGeom" /></p>
+
+<p><strong>Step 2.4:</strong> Import 3D scan (2/2). In the Node graph editor, click on the new node and then in the parameters below the editor, select the 3D scanned model under “File names”. In the tutorial, we renamed the node “Fridolin”. If you skipped the 3D scanning phase, you can use <a href="../../assets/supplementary_material/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning-example-scan.zip">this file</a> that was obtained by scanning a person with the Structure sensor.</p>
+
+<p><strong>Step 2.5:</strong> Match the 3D scan and the Basemesh. Observe the 3D scanned model that appears in the Viewport3D next to the Basemesh model. The two models possibly have different orientations and sizes. If so, in the Node graph editor, click on the LoadGeom node and in the parameters window below the graph, try to change the Scale. Use the controls in the Viewport3D to rotate, scale and if needed move the 3D scanned model so that it matches the position and the size of the Basemesh.</p>
+
+<p><strong>Step 2.6:</strong> Importing texture (1/2). In the Node graph editor, press Tab &gt; Image &gt; LoadImage.</p>
+
+<p><strong>Step 2.7:</strong> Importing texture (2/2). In the Node graph editor, click on the new node and then in the parameters below the editor, select the texture of the 3D scan under “File Name”.</p>
+
+<p><strong>Step 2.8:</strong> Applying texture. In the Node graph editor, connect the output of the image node (imported texture) to the input of the geometry node (imported 3D scanned model). The 3D scanned mesh should appear textured in the Viewport3D.</p>
+
+<p><strong>Step 2.9:</strong> Adding a SelectPolygons node. In the Node graph editor, press Tab &gt; Selection &gt; SelectPolygons.</p>
+
+<p><strong>Step 2.10:</strong> Connect the output of the Basemesh to SelectPolygons</p>
+
+<p><strong>Step 2.11:</strong> Add a SelectPoint node. In the Node graph editor, press Tab &gt; Selection &gt; SelectPoints</p>
+
+<p><strong>Step 2.12:</strong> Connect the output of the Basemesh to the input of the SelectPoints node.</p>
+
+<p><strong>Step 2.13:</strong> Connect the output of the geometry node (imported 3D scanned model) to the SelectPoints node.</p>
+
+<p>The Basemesh model should be on the left, and the 3D scanned model should be on the right.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Fig02.png" alt="Wrap Selecting points" /></p>
+
+<p><strong>Step 2.14:</strong>  Wrapping. In the Visual Editor, add corresponding points to the shape of the Basemesh model and the 3D scanned model. Use Left Mouse Click to add a point. Use Ctrl + Left Mouse Click to remove a point.</p>
+
+<p>Points with the same number should be placed in approximately the same areas of the models.</p>
+
+<p><strong>Step 2.15:</strong> Model transformation (1/3). In the Node graph editor, press Tab &gt; Alignment &gt; Wrapping.</p>
+
+<p><strong>Step 2.16:</strong> Model transformation (2/3). In the Node graph editor, connect the outputs of the four nodes to the Wrapping node in the following way:</p>
+<ul>
+  <li>Connect the output of the Basemesh node to the first input of the Wrapping node</li>
+  <li>Connect the output of the Geometry node to the second input of the Wrapping node</li>
+  <li>Connect the output of the SelectPoints node to the third input of the Wrapping node</li>
+  <li>Connect the output of the SelectPolygons node to the fourth input of the Wrapping node</li>
+</ul>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Wrap_04.PNG" alt="Wrap Node graph editor wrapping" /></p>
+
+<p><strong>Step 2.17:</strong> Model transformation (3/3). In the properties of the Wrapping node, click Compute. The computing process will take some time.</p>
+
+<p><strong>Step 2.18:</strong> Saving the new low-polygonal model (1/3). In the Node graph editor, press Tab &gt; Geometry &gt; SaveGeom.</p>
+
+<p><strong>Step 2.19:</strong> Saving the new low-polygonal model (2/3). In the Node graph editor, connect the output of the Wrapping node to the input of the SaveGeom node.</p>
+
+<p><strong>Step 2.20:</strong> Saving the new low-polygonal model (3/3). In the Node graph editor, when the SaveGeom node is selected, in the Properties &gt; File Name, choose where you want to save the new model and click “Compute current frame”.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Wrap_05.PNG" alt="Wrap Node graph editor saving" /></p>
+
+<p><strong>Step 2.21:</strong> Transferring texture (1/2). In the Node graph editor, press Tab &gt; Image &gt; TransferTexture.</p>
+
+<p><strong>Step 2.22:</strong>  Transferring texture (2/2). In the Node graph editor, connect the outputs of two nodes to the TransferTexture node in the following way:</p>
+<ul>
+  <li>Connect the output of the Geometry node to the first input of the TransferTexture node</li>
+  <li>Connect the output of the Wrapping node to the second input of the TransferTexture node</li>
+</ul>
+
+<p><strong>Step 2.23:</strong> Saving the new texture (1/2). In the Node graph editor, press Tab &gt; Image &gt; SaveImage.</p>
+
+<p><strong>Step 2.24:</strong> Saving the new texture (2/3). In the Node graph editor, connect the output of the TransferTexture node to the input of the SaveImage node.</p>
+
+<p><strong>Step 2.25:</strong> Saving the new texture (2/3). In the Node graph editor, when the SaveImage node is selected, in the Properties &gt; File Name, choose where you want to save the new texture and click “Compute current frame”.</p>
+
+<p><strong>Step 2.26:</strong> Check if the resultant 3D model is good enough to be used further in the application. If some parts of the 3D model have issues, the model can be manually corrected or the problematic part of the model can be replaced with the corresponding part of the Basemesh model. This can be done in any 3D editing software, such as <a href="https://www.blender.org/">Blender</a> or <a href="https://www.autodesk.com/products/maya/overview">Maya</a>.</p>
+
+<h2 id="part-3-maya">Part 3. Polishing the model in Maya</h2>
+
+<p>We continue working with the new 3D model in 3D editing software <a href="https://www.autodesk.com/products/maya/overview">Autodesk Maya</a>.</p>
+
+<p><strong>Step 3.1:</strong> Open the 3D model exported from Wrap in Maya.</p>
+
+<p><strong>Step 3.2:</strong> Combining polygons of the new 3D model. In the Outliner viewport, select all polygon elements and them select Mesh &gt; Combine</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Maya_01.PNG" alt="Maya Mesh Combine" /></p>
+
+<p><strong>Step 3.3:</strong> Deleting history. Click on the model and select Edit &gt; Delete all by type &gt; History.</p>
+
+<p><strong>Step 3.4:</strong> Merging vertices of the overlapping polygons (1/2). To edit vertices, Click on the model, then while holding the Right Mouse Button &gt; Vertices.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Maya_02.PNG" alt="Maya Select Vertex" /></p>
+
+<p><strong>Step 3.5:</strong> Merging vertices of the overlapping polygons (2/3). To select vertices, simply zoom out so that the entire model is visible and use the left mouse button to draw a rectangle around it.</p>
+
+<p><strong>Step 3.6:</strong> Merging vertices of the overlapping polygons (3/3). To merge the vertices, select Merge from the panel above the 3D viewport. In the options window that pops up, select the Threshold value as small as possible.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Maya_03.PNG" alt="Maya Merge vertices" /></p>
+
+<p><strong>Step 3.7:</strong> Applying texture (1/4). Click on the model in the 3D viewport. Hold the Right Mouse Button and select Face. Then hold the Right Mouse Button and select Assign new material.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Maya_04.PNG" alt="Maya Assign new material" /></p>
+
+<p><strong>Step 3.8:</strong> Applying texture (2/4). In the Assign new material window that appears, choose Lambert (a simple flat material type).</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Maya_05.PNG" alt="Maya Lambert material" /></p>
+
+<p><strong>Step 3.9:</strong> Applying texture (3/4). In the Attribute editor, the new Lambert material will appear. In the Common Material Attributes, click on the “Check-pattern” button next to the Color.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Maya_06.PNG" alt="Maya Lambert color" /></p>
+
+<p><strong>Step 3.10:</strong> Applying texture (4/4). In the Create Render Node window that appears, select File and find the texture exported from Wrap.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Maya_07.PNG" alt="Maya Add file to Lambert color" /></p>
+
+<p><strong>Step 3.11:</strong> Check how the textured model looks by selecting the Textured view.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Maya_08.PNG" alt="Maya view textured" /></p>
+
+<p><strong>Step 3.12:</strong> Polishing texture (1/3). Click the model, and while holding the Right Mouse Button, select Object Mode. And then select UV &gt; UV Editor from the main menu.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Maya_09.PNG" alt="Maya UV editor" /></p>
+
+<p><strong>Step 3.13:</strong> Polishing texture (2/3). When in the UV Editor, hold the Right Mouse Button and select UV.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Maya_10.PNG" alt="Maya UV editor select UV" /></p>
+
+<p><strong>Step 3.14:</strong> Polishing texture (3/3). When in the UV Editor, zoom in to any problematic area and then select and move the points. In the example below, the stitching edge is problematic because some of the points are located outside of the textured area - on a black background. They need to be moved inside.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Maya_11.PNG" alt="Maya UV editor edit vertices" /></p>
+
+<p><strong>Step 3.15:</strong> If the texture of the model is of acceptable quality, the model and the texture can be together exported as an OBJ or FBX file. In the main menu, select File &gt; export.</p>
+
+<p>If the texture still has issues, it might need polishing in a 2D image editor.</p>
+
+<h2 id="part-4-photoshop">Part 4. Polishing the texture in Photoshop</h2>
+
+<p>The texture might also need some polishing, and correcting the UV map alone (as we did in Step 3.14) is not always enough.</p>
+
+<p>In this tutorial, we are using <a href="https://www.adobe.com/products/photoshop.html">Adobe Photoshop</a> to polish the texture, but any other 2D image editing software can be used.</p>
+
+<p>In Photoshop, we use the Stamp tool to clone parts of the texture to the problematic areas, such as hands and feet.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Photoshop_01.png" alt="Photoshop texture editing" /></p>
+
+<h2 id="part-5-mixamo">Part 5. Character animation with Mixamo</h2>
+
+<p>Mixamo offers multiple free animations and characters.</p>
+
+<p><strong><em>Note:</em></strong> <em>If you want to skip the 3D scanning, converting to a low-polygonal model and polishing parts of the tutorial, you can download an example 3D character model with a polished texture (<a href="../../assets/supplementary_material/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning-example-character.zip">download</a>).</em></p>
+
+<p><strong>Step 5.1:</strong> Open <a href="https://www.mixamo.com/">Mixamo website</a> in your browser, create an account and login.</p>
+
+<p><strong>Step 5.2:</strong> Importing textured model to Mixamo (1/2). Click the Upload Character button.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Fig05.png" alt="Mixamo website" /></p>
+
+<p><strong>Step 5.3:</strong> Importing textured model to Mixamo (2/2) In the window that appears, select the textured 3D model filed either exported from Wrap or Maya. If you skipped parts 1-4, you can use an example 3D character model with a polished texture (download).</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Mixamo_01.png" alt="Mixamo uploading character" /></p>
+
+<p><strong>Step 5.4:</strong> Auto-rigging (1/3). Make sure that the character model is facing you. If it does not, use arrow buttons in the bottom left corner of the screen to rotate it. When finished, click Next.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Mixamo_02.png" alt="Mixamo auto-rigging orientation" /></p>
+
+<p><strong>Step 5.5:</strong> Auto-rigging (2/3). Place markers on the model, following the example given on the right part of the screen. When finished click Next.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Mixamo_03.png" alt="Mixamo auto-rigging placing markers" /></p>
+
+<p><strong>Step 5.6:</strong> Auto-rigging (3/3). Review your character while a sample animation is playing. If the rigging quality is not satisfactory, go to the previous step and try to place markers differently or uncheck “Use symmetry” or use a different skeleton.</p>
+
+<p><strong>Step 5.7:</strong> The rigged character should now appear in the main Mixamo page on the right. Choose an animation from the list on the left and click Download. In the Download settings under Format, select FBX.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Mixamo_04.png" alt="Mixamo download" /></p>
+
+<h2 id="part-6-unity">Part 6.  Importing a character into Unity 3D and animating it</h2>
+
+<p>In this part of the tutorial, we will work in <a href="https://unity.com/">Unity 3D</a> to import and prepare the animation to be used in an Augmented Reality application.</p>
+
+<p><strong>Step 6.1:</strong> Account and License. Open the <a href="https://unity.com/">Unity 3D website</a>. Create an account and you can choose a free individual license either Student or Individual. Download and install Unity 3D.</p>
+
+<p><strong>Step 6.2:</strong> Importing model and animation to Unity 3D (1/3). Open Unity 3D and create a new 3D project.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Unity3D_01.PNG" alt="Unity 3d new project" /></p>
+
+<p><strong>Step 6.3:</strong> Importing model and animation to Unity 3D (2/3). Before an animation can be used in Unity 3D, it should be imported into the project we have just created. In the main menu, select the Assets &gt; Import package &gt; Custom package or simply drag-and-drop the FBX file that you exported from either Wrap or Maya into the Assets folder in the Project viewport of Unity 3D. The animation file should appear under Assets.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Unity3D_02.PNG" alt="Unity 3d importing fbx" /></p>
+
+<p><strong>Step 6.4:</strong> Importing model and animation to Unity 3D (3/3). Even though the FBX file contains the texture, Unity 3D might not automatically apply the texture. If this happens, you can simply import the texture also by dragging the texture file to the same folder in Assets in Unity 3D.</p>
+
+<p><strong>Step 6.5:</strong> Creating a material. Click the Right Mouse Button in the same Assets folder and select Create &gt; New material.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Unity3D_03.PNG" alt="Unity 3d new material" /></p>
+
+<p><strong>Step 6.6:</strong> Adding the texture to the material. Click on the new material in the Assets folder and then drag the texture from the assets into the Albedo property in the Inspector.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Unity3D_04.PNG" alt="Unity 3d add texture to material" /></p>
+
+<p><strong>Step 6.7:</strong> Select the 3D model in the Assets. In the Inspector, select Rig. In the Animation Type dropdown menu, select Humanoid and then click Apply.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Unity3D_05.PNG" alt="Unity 3d rig humanoid" /></p>
+
+<p><strong>Step 6.8:</strong> Select the 3D model in the Assets. In the Inspector, select Materials. Drag the material you have created from the Assets onto the property On Demand Remap and then click Apply.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Unity3D_06.PNG" alt="Unity 3d add material" /></p>
+
+<p><strong>Step 6.9:</strong> Drag the 3D model from the Assets into the Scene. The character should appear in the Scene view and in the Hierarchy.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Unity3D_07.PNG" alt="Unity 3d add character to scene" /></p>
+
+<p><strong>Step 6.10:</strong> Import other objects or simply create a flat surface for your character by selecting in the main menu GameObject &gt; 3D object &gt; Cube and modifying the parameters.</p>
+
+<p><strong>Step 6.11:</strong> Creating an Animator Controller. An animator controller allows you to arrange and maintain one or multiple animations of your character. It is necessary to play character animations in Unity 3D. Click the Right Mouse Button in the Project view and select Create &gt; Animator Controller. A new Animator Controller should appear in the Assets.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Unity3D_08.PNG" alt="Unity 3d create animator controller" /></p>
+
+<p><strong>Step 6.12:</strong> Double-click the Animator Controller in the Assets to open the Animator window, which contains a visualization of the Animation State Machine that is used to arrange multiple animations of the character.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Unity3D_09.PNG" alt="Unity 3d animation state machine" /></p>
+
+<p><strong>Step 6.13:</strong> Expand the FBX file in the Assets and find the animation under it. Drag the animation from the Assets into the Animator Controller.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Unity3D_10.PNG" alt="Unity 3d add animation to animator controller" /></p>
+
+<p>The animation should appear as an orange rectangle. This means that the animation will play as soon as the object with this animation appears.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Unity3D_11.PNG" alt="Unity 3d animation in the state machine" /></p>
+
+<p><strong>Step 6.14:</strong> Applying the animation to the character model. Select the character model in the Hierarchy and drag the Animator Controller into the Controller property in the Inspector.</p>
+
+<p><img src="../../assets/figures/3dscanning-animation/Code_Reality_AR-Foundations_3D-scanning_Unity3D_12.PNG" alt="Unity 3d add animator controller to character" /></p>
+
+<p><strong>Step 6.15:</strong> Click the Play button in Unity to see the character animated in the scene.</p>
+
+  </div>
+
+</article>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">The Open Augmented Reality Teaching Book</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li>The Open Augmented Reality Teaching Book</li>
+          <li><a href="mailto:klamma@dbis.rwth-aachen.de">klamma@dbis.rwth-aachen.de</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          <li>
+            <a href="https://twitter.com/AR_FOR_EU"><span class="icon icon--twitter"><svg viewBox="0 0 16 16"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">AR_FOR_EU</span></a>
+
+          </li>
+          <li>
+            <a href="/ar-for-eu-book/feed.xml"><span class="icon icon-rss"><?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"> 
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="128px" height="128px" id="RSSicon" viewBox="0 0 256 256">
+<defs>
+<linearGradient x1="0.085" y1="0.085" x2="0.915" y2="0.915" id="RSSg">
+<stop  offset="0.0" stop-color="#E3702D"/><stop  offset="0.1071" stop-color="#EA7D31"/>
+<stop  offset="0.3503" stop-color="#F69537"/><stop  offset="0.5" stop-color="#FB9E3A"/>
+<stop  offset="0.7016" stop-color="#EA7C31"/><stop  offset="0.8866" stop-color="#DE642B"/>
+<stop  offset="1.0" stop-color="#D95B29"/>
+</linearGradient>
+</defs>
+<rect width="256" height="256" rx="55" ry="55" x="0"  y="0"  fill="#CC5D15"/>
+<rect width="246" height="246" rx="50" ry="50" x="5"  y="5"  fill="#F49C52"/>
+<rect width="236" height="236" rx="47" ry="47" x="10" y="10" fill="url(#RSSg)"/>
+<circle cx="68" cy="189" r="24" fill="#FFF"/>
+<path d="M160 213h-34a82 82 0 0 0 -82 -82v-34a116 116 0 0 1 116 116z" fill="#FFF"/>
+<path d="M184 213A140 140 0 0 0 44 73 V 38a175 175 0 0 1 175 175z" fill="#FFF"/>
+</svg>
+</span><span class="username">Subscribe</span></a>
+
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        <p>The Open Augmented Reality Teaching Book</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+    <!-- load visualizations (at the end so that the div elements are known here) -->
+    
+  </body>
+
+</html>

@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html>
+
+  ﻿<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Collaboration &amp; Sharing</title>
+    <meta name="description" content="The Open Augmented Reality Teaching Book">
+
+    <link rel="stylesheet" href="/ar-for-eu-book/css/main.css">
+    <link rel="canonical" href="https://klamma.github.io/ar-for-eu-book/chapter/sharing/">
+    <link rel="alternate" type="application/rss+xml" title="The Open Augmented Reality Teaching Book" href="https://klamma.github.io/ar-for-eu-book/feed.xml">
+
+    <!-- Favicon head tag -->
+    <link rel="shortcut icon" href="/ar-for-eu-book/favicon.ico" type="image/x-icon">
+
+    <!-- Visualization Libraries -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+    <!-- formula rendering -->
+    <script type="text/javascript" async
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/ar-for-eu-book/">The Open Augmented Reality Teaching Book</a>
+
+    <nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </a>
+
+      <div class="trigger">
+	  <a class="page-link" href="https://codereality.net/">Code Reality</a>
+          <a class="page-link" href="/ar-for-eu-book/posts">Blog Posts</a>
+          <a class="page-link" href="/ar-for-eu-book/toc">Table of Content</a>
+          <a class="page-link" href="/ar-for-eu-book/references">Bibliography</a>
+          <a class="page-link" href="/ar-for-eu-book/contrib">Contributors</a>
+          <a class="page-link" href="/ar-for-eu-book/about">About</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Collaboration & Sharing</h1>
+  </header>
+
+  <div class="post-content">
+    
+<h2 id="collaboration-in-a-shared-virtual-environment">Collaboration in a Shared Virtual Environment</h2>
+
+<h3 id="contents">Contents</h3>
+
+<ol>
+  <li><a href="#Challenges">Common Challenges of Networking</a></li>
+  <li><a href="#NetworkingLibraries">Networking Libraries</a></li>
+  <li><a href="#ExercisePhoton">Exercise: Creating a Shared Application in Photon</a>
+    <ol>
+      <li><a href="#ProjectSetup">Setting up the project</a></li>
+      <li><a href="#GameElements">Creating the Draughts Game Elements</a></li>
+      <li><a href="#SharedEnvironment">Setting up the Shared Environment</a></li>
+      <li><a href="#GamePiecesSetup">Implementing the Game Pieces Setup</a></li>
+      <li><a href="#Observables">Synchronizing Data with Observables</a></li>
+      <li><a href="#RPCs">Synchronizing Data with Remote Procedure Calls</a></li>
+      <li><a href="#furtherIdeas">Some Ideas on How to Proceed</a></li>
+    </ol>
+  </li>
+  <li><a href="#Testing">Testing on one PC</a></li>
+  <li><a href="#VIAProMa">Example Application with a Shared Environment: VIAProMa</a></li>
+</ol>
+
+<p>Synchronous collaboration in Mixed Reality is possible in a shared virtual environment.
+This means that the shown 3D objects are synchronized between the participants and changes are broadcast in real-time.
+As an example, if one participant picks up an object and moves it around, the other members of the shared environment should be able to perceive the motion of the object accurately and with a low latency.
+There are a few considerations that need to be made in order to successfully realize such a system.</p>
+
+<h3 id="Challenges">Common Challenges of Networking</h3>
+
+<p>A series of common challenges can occur in the implementation of a shared environment.</p>
+
+<ul>
+  <li><strong>Network traffic</strong>: To synchronize data between participants, messages have to be exchanged over the network.
+With a rising number of participants, the number of messages also rises which increases the network load and the load on any central servers.
+To reduce the network traffic, developers should aim to minimize the number of sent information (<a href="https://doc.photonengine.com/en-us/pun/current/gameplay/optimization">Photon Optimization</a>).
+For instance, some information can be reconstructed locally from other shared data.
+We will see an example of this with the colouring of game pieces in the tutorial of this chapter.</li>
+  <li><strong>Unreliable connection</strong>: Packages are not guaranteed to reach their receiver if a client has a poor internet connection.
+Moreover, the order in which packages are sent does not have to correspond to the order in which packages arrive at the receiver <a class="citation" href="#ClCl10">(Claypool &amp; Claypool, 2010)</a>.
+The networking library has to account for this.</li>
+  <li><strong>Session &amp; User management</strong>: In an office building not all people want to communicate with every other person at the same time.
+The building is separated into floors and offices so that meetings only contain a limited amount of participants.
+Similarly, people who connect to the shared environment not always want to see every other connected person.
+Instead, the networking solution needs to manage sessions which can happen in parallel and where a limited number of participants can take part in a closed meeting.</li>
+  <li><strong>Permissions</strong>: To stick with the building metaphor, not all people in a building should be allowed to enter any office.
+Similarly, sessions should be closed to some participants or can only access a session if they are invited.</li>
+  <li><strong>Conflict handling</strong>: In a shared environment, multiple users can perform actions at the same time.
+This can lead to conflicts, e.g. if two people alter the same object in parallel.
+The networking library needs to account for this and either forbid parallel actions on the same object or resolve such conflicts.</li>
+  <li><strong>Movement smoothing</strong>: To save network traffic, the position of an object is not broadcast every single frame but in larger intervals.
+If the receiving client just updates the position of the object to the values given in the latest package, the user will see the object teleport along the path instead of a smooth movement.
+To solve this, the implementation should interpolate between the received positions.
+There is a trade-off between the smoothness and the latency.
+If a package is received, this means that the object should be at the received position.
+But with a naive interpolation between the last position and the most-recently received position, the object can only start moving towards this position now.
+This means that the object is always one package behind.
+A more advanced solution is to also broadcast the velocity vector of the object.
+With the direction and speed that the object is currently moving, the receiving client can anticipate the next position by extrapolating the object’s position along this trajectory.
+When the next package arrives, the position is corrected.</li>
+  <li><strong>Consistency-throughput</strong>: Latency is the natural enemy of sharing states across devices, preventing keeping states consistent, if the frequency of change and the number of changing nodes becomes too large. Communication delays from frequent state changes further impede the state change updates of the other nodes. “Latency hiding”, i.e., precomputing predicted states and sending them right in time for just-in-time, is a way around this, if combined with “self-healing” to take account of “suprise-injected events” <a class="citation" href="#PeMi20">(Peitso &amp; Michael, 2020)</a>.</li>
+</ul>
+
+<p>With poor connection, networked applications can show a series of common effects.
+Developers need to be aware of them and know how they are produced.</p>
+
+<ul>
+  <li><strong>Teleporting</strong>: If packages are lost, e.g. due to a poor internet connection, the data on remote clients is not updated.
+Especially for moving objects this can be a problem.
+Remote clients will see the object in the same spot for a longer time and after that, it will suddenly jump to its current position.
+This “teleporting” action is unexpected by the user.</li>
+  <li><strong>Rubber-banding</strong>: With the described interpolation method which also works with the velocity vector of the object, an effect called “rubber-banding” can occur.
+It means that objects do not immediately react to large accelerations or decelerations but instead keep moving, before bouncing back to their true position.
+We will look at this effect in a 1D example:
+There is an object which can only move left or right.
+It is moved on sender S and there is a receiver R.
+We assume one-way communication where the sender tells R about the updated positions.
+We will ignore the connection architecture and any network delay.
+This means that we can simply assume that an object which is sent at time point t by the sender is also received by the receiver at point t.
+At time point 0, a package is sent.
+It describes that the object is currently at position 0 and has a speed of 5.
+The package is received by r.
+It places the object at position 0 and starts moving it so that it will be at position 5 at time step 1.
+At time step one, S tells R that the object has actually moved to position 5 and still has a velocity of 5.
+R now gradually moves the object from position 5 to position 5 + 6 = 11 in a way that it will arrive at 11 at time point 2.
+At time step 2.5, the object comes to an abrupt halt on S at position 8.
+However, this is not immediately told R because packages are only sent at full time steps.
+So, at time step 3, S sends that the object is at position 8 with a speed of 0.
+But R has already moved the object to position 11 and now has to move it back to 8 in the next time interval.
+To the user which views the object on R this seems like a rubber-band effect since the object overshoots the target position before being pulled back to the point where it came to a halt.</li>
+</ul>
+
+<h3 id="NetworkingLibraries">Unity Networking Libraries</h3>
+
+<p>Unity had its own network library called UNET, however it is now deprecated.
+Therefore, developers need to look at other networking solutions.</p>
+
+<h4 id="photon">Photon</h4>
+
+<p><a href="https://www.photonengine.com/pun">Photon</a> is one alternative to realize collaborative applications in Unity.
+It is a commercial product suite by Exit Games which provides a free plan for up to 20 concurrent users and up to 500 messages per second.
+The sharing functionality can be realized using the Photon PUN2 library.
+Moreover, Photon provides further libraries for collaboration, e.g. to realize a text chat or a voice chat.</p>
+
+<h3 id="ExercisePhoton">Exercise: Creating a Shared Application in Photon</h3>
+
+<p>In this exercise, we will create the game <a href="https://en.wikipedia.org/wiki/Draughts">Draughts</a> (also known as Checkers).
+This sample app will provide a way for two remote users to move playing stones on a board so that both participants can see each other’s moves.
+We will not implement the rules of the game in this exercise.
+Instead, the app provides the shared pieces and relies on players to move them according to the rules.
+If you want, you can implement rules, e.g. move restrictions once you completed the exercise.</p>
+
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/4u5WCXNZ56I" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+
+<p>This exercise is split into five sections.
+The first part will demonstrate how the Unity project is created and how the necessary libraries can be imported.
+After that, the base logic of the draughts game is created.
+The third part demonstrates the setup of a shared environment for remote players.
+It will demonstrate how to set up a room system where content is only shared between users in one room and where multiple rooms can exist in parallel.
+In the fourth part, we will look at a basic way of implementing the shared logic using serializers.
+The last part presents an alternative way for sending data over the network using Remote Procedure Calls (RPCs).</p>
+
+<h4 id="ProjectSetup">1 - Setting up the Project</h4>
+
+<ol>
+  <li>
+    <p>Create a new Unity project with the name “SharedDraughts” which uses the default <em>3D</em> template.
+In this exercise, we are using Unity 2018.4 because it is the current long-term support version that is compatible with the Mixed Reality Toolkit.
+If you are using the Unity Hub, you can select which Unity version should create the project by clicking on the down arrow on the <em>New</em> button.</p>
+
+    <p><img src="../../assets/figures/sharing/sharingExercise/CreateProject.png" alt="Create Project" />
+<img src="../../assets/figures/sharing/sharingExercise/ProjectName.png" alt="Project Name Menu" /></p>
+  </li>
+  <li>
+    <p>Download the Mixed Reality Toolkit.
+Go to the <a href="https://github.com/microsoft/MixedRealityToolkit-Unity/releases">releases</a> of the Mixed Reality Toolkit on GitHub and scroll to the latest version which is not marked as a pre-release.
+We are using the release <em>Microsoft Mixed Reality Toolkit v2.3.0</em>.
+In the Assets section of the release, download the Unity-package which has <em>Foundation</em> in its name as this is the base package.
+In our case, it is called * Microsoft.MixedReality.Toolkit.Unity.Foundation.2.3.0.unitypackage*.</p>
+
+    <p><a href="https://github.com/microsoft/MixedRealityToolkit-Unity/releases"><img src="../../assets/figures/sharing/sharingExercise/DownloadMRTK.png" alt="Download Mixed Reality Toolkit" /></a></p>
+  </li>
+  <li>
+    <p>Import the Mixed Reality Toolkit.
+To do this, select the project panel in Unity and perform a right-click in Unity’s Asset Browser.
+Select <em>Import Package &gt; Custom Package</em> from the context menu.</p>
+
+    <p><img src="../../assets/figures/sharing/sharingExercise/ImportCustomPackage.png" alt="Import Custom Package" /></p>
+
+    <p>After that, select the Unity-package that you just downloaded in the opened file explorer and click <em>Open</em>.
+Unity will prepare the Unity-package for the import.
+Next, a dialog will be shown which allows you select which content should be imported.
+Click <em>All</em> to make sure that everything is selected and then press <em>Import</em>.</p>
+
+    <p><img src="../../assets/figures/sharing/sharingExercise/ImportPackage.png" alt="Import Package Selection Menu" /></p>
+
+    <p>Once the import has finished, you will find the new folders of the Mixed Reality Toolkit in your assets.</p>
+  </li>
+  <li>
+    <p>After the import, a configuration window will automatically open.
+It states that the Mixed Reality Toolkit would like to apply some settings to prepare the Unity project for Mixed Reality development.
+Make sure that every recommendation in the list is checked and then click <em>Apply</em>.</p>
+
+    <p><img src="../../assets/figures/sharing/sharingExercise/MRTKConfiguration.png" alt="MRTK Configure Project Settings" /></p>
+  </li>
+  <li>The next step is to prepare the import of the Photon library.
+Each application that uses Photon needs an AppId which is coupled with an account.
+Go to <a href="https://www.photonengine.com/pun">Photon’s homepage</a> and create an account by clicking <em>Sign in</em> in the top right and then selecting <em>Don’t have an account? Create one…</em>.</li>
+  <li>
+    <p>After the registration you are on a dashboard where you can administer your Photon applications.
+Click on the button <em>CREATE A NEW APP</em>.</p>
+
+    <p><img src="../../assets/figures/sharing/sharingExercise/CreatePhotonApp.png" alt="Create New Photon App" /></p>
+  </li>
+  <li>
+    <p>On the next screen, you will be asked to enter the information about the new application.
+Set the type to Photon PUN since we will work with Photon’s PUN library.
+Additionally, give the app a descriptive name, e.g. <em>SharedDraughts</em>.
+You can also add a description if you want so that it becomes easier to identify the app later.
+When you are done, click the <em>CREATE</em> button.</p>
+
+    <p><img src="../../assets/figures/sharing/sharingExercise/PhotonAppSettings.png" alt="Photon App Settings" /></p>
+  </li>
+  <li>
+    <p>You will now be directed back to the Photon dashboard where a new panel has appeared with the name of your application.
+Here, you can get the AppID of the application and look at its usage statistics.</p>
+
+    <p><img src="../../assets/figures/sharing/sharingExercise/PhotonDashboard.png" alt="Photon Dashboard" /></p>
+  </li>
+  <li>
+    <p>Next, we are going to import the Photon library in Unity so that we can create a networked application.
+In Unity, go to <em>Window &gt; Asset Store</em> or press <code class="highlighter-rouge">Ctrl + 9</code> to open the asset store window.
+Make sure that you are signed in with a Unity account so that you can download resources from the asset store.
+If you are not signed in, there is a <em>Sign in</em> button at the top right of the asset store panel.
+Search for <em>Pun 2 - FREE</em> and select it.
+Click on the blue <em>Add to My Assets</em> button.
+Once this is done, the button’s caption will change to <em>Import</em> and you can click the button again to import the asset.
+Just like the Unity-package of the Mixed Reality Toolkit, Unity now displays a dialogue window where you can select which resources you want to import.
+Select everything and click the <em>Import</em> button in the dialogue.</p>
+  </li>
+  <li>
+    <p>Once the import has finished, PUN will automatically open a pop-up window where you can enter the AppID that we generated previously.
+To do so, go back to the browser and copy your full AppID that we generated.
+The dashboard only shows a cut-off preview of the AppID.
+Click on the app ID and the full ID will be shown.
+It is automatically highlighted so that you can copy it.
+Enter the ID in the text field of the opened window in Unity.</p>
+
+    <p><img src="../../assets/figures/sharing/sharingExercise/PUNSetup.png" alt="PUN Setup" /></p>
+
+    <p>If you have accidentally closed the window or pressed <em>Skip</em>, you go to <em>Window &gt; Photon Unity Networking &gt; Highlight Server Settings</em>.
+In the inspector, you can enter the AppID in the <em>Settings</em> section under <em>AppID Realtime</em></p>
+
+    <p><img src="../../assets/figures/sharing/sharingExercise/PUNServerSettings.png" alt="PUN Server Settings" /></p>
+  </li>
+</ol>
+
+<h4 id="GameElements">2 - Creating the Draughts Game Elements</h4>
+
+<p>We have finished the project setup and can now start with setting up the pieces of the Draughts game.</p>
+
+<ol>
+  <li>
+    <p>First, we need to create the scene.
+To keep things organized, go to the <em>Scenes</em> folder in the assets browser, perform a right-click and choose <em>Create &gt; Scene</em>.
+Name the scene “MainScene”.</p>
+
+    <p><img src="../../assets/figures/sharing/sharingExercise/CreateScene.png" alt="Create Unity Scene" /></p>
+
+    <p>Perform a double click on the scene file in the assets browser to open it in the 3D view.
+Also, make sure that you switch back to the 
+You can confirm that the scene was opened by looking at the title bar of the Unity window.
+It includes the name of the open scene.</p>
+  </li>
+  <li>
+    <p>In the top menu select <em>Mixed Reality Toolkit &gt; Add to Scene and Configure</em></p>
+
+    <p><img src="../../assets/figures/sharing/sharingExercise/MRTKAddConfigure.png" alt="Add to Scene and Configure" /></p>
+
+    <p>This adds a <em>MixedRealityToolkit</em> GameObject and a <em>MixedRealityPlayspace</em> GameObject to the scene’s hierarchy.</p>
+  </li>
+  <li>
+    <p>Add a cube to the scene by choosing <em>GameObject &gt; 3D Object &gt; Cube</em> from the top menu.
+It will act as the playing field.
+Rename it in the inspector to <em>Playing Field</em>.
+There, you can also move the cube to the position (0, 0, 2) so that it is two meter in front of the user at the application start.
+Scale it to the measurements (0.8, 0.02, 0.8) so that it is a flat playing field.</p>
+
+    <p><img src="../../assets/figures/sharing/sharingExercise/PlayingField.png" alt="Playing Field" /></p>
+  </li>
+  <li>
+    <p>We will now import the checkerboard texture for the playing field.
+To keep your project organized, create a new folder with the name <em>Textures</em> in the root assets folder.
+You can do this by performing a right-click in Unity’s asset browser and choosing <em>Create &gt; Folder</em>.
+Download the given checkerboard texture by right-clicking on <a href="../../assets/supplementary_material/sharing/CheckerboardTexture.png">this link</a> and choosing <em>Save target as…</em>.
+Place the texture in the new folder.
+Simply navigate in the file browser dialog to the place where you saved your Unity project.
+It contains the asset folder and within it the textures folder.
+If you return to Unity, the texture will show up in the asset browser.</p>
+  </li>
+  <li>
+    <p>Next, we create a new material.
+Go to the assets folder in Unity and create a folder <em>Materials</em> (right-click, <em>Create &gt; Folder</em>).
+With the folder opened in Unity’s asset browser, right-click and select <em>Create &gt; Material</em> to create a new material.
+Enter the name <em>Checkerboard</em> and confirm with enter.</p>
+
+    <p><img src="../../assets/figures/sharing/sharingExercise/CreateMaterial.png" alt="Create Material" /></p>
+  </li>
+  <li>
+    <p>Select the material in the asset browser so that it can be configured in the inspector.
+First, we will change the material’s shader to the optimized shader of the Mixed Reality Toolkit.
+Click on the <em>Shader</em> dropdown at the top of the inspector and change it to <em>Mixed Reality Toolkit &gt; Standard</em>.
+Next, we will assign the texture to the material.
+There is an <em>Albedo</em> property underneath <em>Main Maps</em>.
+Click on the icon with the small circle with a dot in the middle left of the <em>Albedo</em> text to choose a texture.
+A dialog with all textures in the project opens.
+Search for <em>Checkerboard</em> (the name of the texture) and select it.
+After that you can close the dialog window again.</p>
+
+    <p><img src="../../assets/figures/sharing/sharingExercise/AssignTexture.png" alt="Assign Texture" /></p>
+  </li>
+  <li>
+    <p>Apply the material to the playing field object by dragging and dropping it from the asset browser onto the GameObject.</p>
+
+    <p><img src="../../assets/figures/sharing/sharingExercise/AssignMaterial.png" alt="Assign Material" /></p>
+  </li>
+  <li>
+    <p>Draughts is played on a chess board which has 8 by 8 fields.
+At the moment we only have a 2 by 2 board.
+We can change this by increasing the texture’s tiling factor in the material’s settings to 4 for X and Y.</p>
+
+    <p><img src="../../assets/figures/sharing/sharingExercise/ChangeTilingFactor.png" alt="Change Tiling Factor" /></p>
+  </li>
+  <li>
+    <p>We now have a board but we still need the game pieces.
+There are two kinds of game pieces in Draughts: A man and a king.
+A king is represented by two stacked pieces.
+To support both kinds of game elements in the application, we will create one general purpose GameObject where two cylinders are stacked on top of each other.
+If we want to represent a man, we disable the cylinder on the top; for kings the upper cylinder will be enabled.
+We need a parent GameObject which will hold both cylinders.
+Add an empty GameObject in the top menu using <em>GameObject &gt; Create Empty</em>.
+Name the GameObject <em>GamePiece</em> in the inspector.</p>
+  </li>
+  <li>
+    <p>Create a cylinder (<em>GameObject &gt; 3D Object &gt; Cylinder</em>).
+Scale the cylinder to (0.08, 0.01, 0.08) so that it fits onto one field of the board.
+Make the cylinder a child of the <em>GamePiece</em>.
+This can be done by dragging and dropping the entry of the cylinder onto the entry of the <em>GamePiece</em> in the hierarchy view.
+Move the cylinder to the position (0, 0.01, 0) so that the origin of the <em>GamePiece</em> object is at the bottom of the cylinder.</p>
+  </li>
+  <li>
+    <p>By default, the cylinder has a capsule collider which approximates its shape well with the exception of the caps at the top which are rounded.
+However, the capsule collider cannot approximate the flat shape of the piece.
+Therefore, remove the capsule collider in the inspector.
+This is possible by clicking on the small cogwheel right of the Capsule Collider section and by selecting <em>Remove Component</em> from the opened context menu.</p>
+
+    <p><img src="../../assets/figures/sharing/sharingExercise/RemoveCollider.png" alt="Remove Capsule Collider" /></p>
+
+    <p>After that, add a box collider by clicking the <em>Add Component</em> button at the bottom.
+In the open menu search for <em>Box Collider</em> and choose the <em>Box Collider</em> component.
+The added box collider automatically fits around the cylinder.</p>
+
+    <p><img src="../../assets/figures/sharing/sharingExercise/AddBoxCollider.png" alt="Add Box Collider" /></p>
+  </li>
+  <li>
+    <p>Duplicate the cylinder by selecting it and using the keyboard shortcut <code class="highlighter-rouge">Ctrl + D</code> and move the new copy to the position (0, 0.033, 0) so that it sits on top of the other cylinder with a little gap between the two pieces.</p>
+  </li>
+  <li>
+    <p>Create a new material in the <em>Materials</em> folder and name it <em>GamePiece</em>.
+Change its shader to the <em>Mixed Reality Toolkit &gt; Standard</em> shader.
+Apply the material to both cylinder objects by dragging and dropping it onto them.</p>
+  </li>
+  <li>
+    <p>Add a <em>PhotonView</em> component to the <em>GamePiece</em> GameObject.
+This component will later make sure that playing piece can be synchronized.</p>
+  </li>
+  <li>
+    <p>Create a Prefab from the stacked pieces.
+To do this, create a new folder in the assets folder called <em>Prefabs</em>.
+We want to create instances of the prefab later using the sharing library.
+Therefore, we need another folder inside of the <em>Prefab</em> folder which must be called <em>Resources</em>.
+The name of this folder is important since scripts can access the content folders with this name.
+With the folder open in assets browser, drag and drop the <em>GamePiece</em> object from the hierarchy into the assets browser.
+This should create a new file called <em>GamePiece</em> with a thumbnail that looks like the game piece that we just created.</p>
+
+    <p><img src="../../assets/figures/sharing/sharingExercise/GamePiecePrefab.png" alt="Create Game Piece Prefab" /></p>
+  </li>
+  <li>
+    <p>The prefab is saved on the hard drive and you can delete the <em>GamePiece</em> GameObject in the scene.
+Select it and press the delete key on the keyboard.</p>
+  </li>
+</ol>
+
+<h4 id="SharedEnvironment">3 - Setting up the Shared Environment</h4>
+
+<p>The application will work with two scenes.
+The player will start in a start scene which is for connecting to the shared environment.
+Once a connection has been established, the player switches to the main scene which contains all the objects.</p>
+
+<ol>
+  <li>
+    <p>Create a new scene called <em>StartScene</em>.
+We will use this scene to implement the connection logic to connect to the sharing servers.
+Double click on the scene file to open it in the 3D view.
+You can now add the Mixed Reality Toolkit to this scene.
+In the top menu select “Mixed Reality Toolkit &gt; Add to Scene and Configure…”.</p>
+  </li>
+  <li>
+    <p>Open the scene and create a new empty GameObject.
+Name it <em>RoomLauncher</em>.
+This GameObject will hold a script which initiates the connection try to the servers.</p>
+  </li>
+  <li>
+    <p>Create a new script and call it <em>RoomLauncher</em>.
+To create the script, perform a right-click in the assets browser and select “Create &gt; C# Script”.</p>
+  </li>
+  <li>
+    <p>Open the script and implement the following piece of code:</p>
+
+    <pre><code class="language-[C#]">using Photon.Pun;
+using UnityEngine;
+   
+public class RoomLauncher : MonoBehaviourPunCallbacks
+{
+    private string gameVersion = "1";
+   
+    private void Awake()
+    {
+        PhotonNetwork.AutomaticallySyncScene = true;
+    }
+   
+    private void Start()
+    {
+        ConnectToServer();
+    }
+   
+    private void ConnectToServer()
+    {
+        if (PhotonNetwork.IsConnected)
+        {
+            PhotonNetwork.JoinRandomRoom();
+        }
+        else
+        {
+            PhotonNetwork.ConnectUsingSettings();
+            PhotonNetwork.GameVersion = gameVersion;
+        }
+    }
+   
+    public override void OnConnectedToMaster()
+    {
+        Debug.Log("OnConnectedToMaster");
+        PhotonNetwork.JoinRandomRoom();
+    }
+   
+    public override void OnJoinRandomFailed(short returnCode, string message)
+    {
+        Debug.Log("OnJoinRandomFailed. Creating new room");
+        PhotonNetwork.CreateRoom("", new Photon.Realtime.RoomOptions{ MaxPlayers = 2 });
+    }
+   
+    public override void OnJoinedRoom()
+    {
+        Debug.Log("Joined a room");
+    }
+}
+</code></pre>
+
+    <p>Let us go over the code to see what happens.
+First of all, the script should inherit from <code class="highlighter-rouge">MonoBehaviourPunCallbacks</code>.
+This class is a MonoBehaviour which contains callback methods of the sharing library PUN.
+The base class automatically registers the script so that the callback methods are invoked in the right moments.
+In our script, we can override these methods in the base class.
+It is not necessary to call the base methods since they are empty.
+After GameObject has been initialized in <code class="highlighter-rouge">Start()</code>, we immediately try to connect to the server.
+There are two connection stages.
+If we are disconnected, we first need to connect to the server and are automatically placed in a lobby.
+In this lobby we can join rooms which separate parallel sessions.
+When connecting to the server, we can pass settings such as the game version.
+If we continue developing the application, we can increment the game version once we introduce breaking changes.
+Clients which use different game version strings will not be able to connect to each other to avoid incompatible sharing data.
+Once the connection to the server has been established, <code class="highlighter-rouge">OnConnectedToMaster()</code> is called.
+In this example, we implement a random pairing of participants.
+The method <code class="highlighter-rouge">PhotonNetwork.JoinRandomRoom()</code> will connect to a random existing room.
+The connection methods have a positive and a negative callback method.
+For instance, there is a <code class="highlighter-rouge">OnJoinedRoom()</code> method that notifies us that the client is now in a room.
+However, the <code class="highlighter-rouge">JoinRandomRoom()</code> method can also fail if no room exists or all rooms are full.
+In this case, the negative callback <code class="highlighter-rouge">OnJoinRandomFailed</code> is called and we can create a new room.
+A new room is created using the method <code class="highlighter-rouge">PhotonNetwork.CreateRoom(...)</code>.
+The first argument is the room’s name.
+Since we left this empty, the server will just generate a random name.
+In the second argument, we can pass settings for the room.
+Since Draughts is a two-player game, we allow a maximum of two players to join a room.</p>
+  </li>
+  <li>
+    <p>Add the script as a component to the GameObject <em>RoomLauncher</em>.</p>
+  </li>
+  <li>
+    <p>Next, we will set up the scene switching.
+Note that for the sake of simplicity, we will use Unity’s API to switch between scenes.
+However,  the MRTK also provides a scene management system which makes sure that the MRTK is consistent across scenes.
+Since we will not change the configuration of the MRTK in this tutorial, it is fine to stick with Unity’s API.
+Go to “File &gt; Build Settings” and open the Build Settings Window.
+While keep the window open, navigate to your scenes folder in the assets browser.
+First, drag-and-drop the StartScene into the list <em>Scenes in Build</em> at the top of the Build Window.
+After that, also drag-and-drop the MainScene.
+In the list, StartScene should now have a 0 next to it on the right and MainScene a 1.
+The number is the scene index which can be used to address the scene.</p>
+
+    <blockquote>
+      <p>Make sure that you always start the application with the <em>StartScene</em> opened so that the connection procedure is executed.
+If you start in the <em>MainScene</em>, the client will stay disconnected which leads to error messages as the application tries to synchronize data but cannot reach the server.</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>Go back to the <code class="highlighter-rouge">RoomLauncher</code> script.
+In the <code class="highlighter-rouge">OnJoinedRoom()</code> method, add the line <code class="highlighter-rouge">SceneManger.LoadScene(1);</code>.
+This only works if you add the directive <code class="highlighter-rouge">using UnityEngine.SceneManagement</code> at the top.
+Once the client has joined a room, the scene will switch.
+You should now be able to start the application in the StartScene.
+In the console, you can keep track of the connection process and after a couple of seconds, the scene should switch to MainScene where the board is set up.</p>
+  </li>
+</ol>
+
+<h4 id="GamePiecesSetup">4 - Implementing the Game Pieces Setup</h4>
+
+<p>Right now, players can enter a room and will find an empty board.
+In the next few steps, we will change this so that the application automatically initializes the play pieces and assigns them a colour.</p>
+
+<ol>
+  <li>Create a script <code class="highlighter-rouge">BoardInitializer</code> and attach it the the <em>Playing Field</em> GameObject.
+It will initialize the board by placing the own pieces on the playing field.</li>
+  <li>
+    <p>Copy and paste the following code to the <code class="highlighter-rouge">BoardInitializer</code> script.</p>
+
+    <pre><code class="language-[C#]">using Photon.Pun;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+   
+public class BoardInitializer : MonoBehaviour
+{
+    public const string firstPlayerFlag = "FirstPlayer";
+   
+    public Transform mixedRealityPlayspace;
+   
+    private void Start()
+    {
+        bool firstPlayer = true;
+        // check if we are the first or second player in the room
+        // each player has a shared flag which is realized as a custom property
+        for (int i = 0; i &lt; PhotonNetwork.PlayerListOthers.Length; i++)
+        {
+            if ((bool)PhotonNetwork.PlayerListOthers[i].CustomProperties[firstPlayerFlag])
+            {
+                Debug.Log(PhotonNetwork.PlayerListOthers[i].ActorNumber + " is first player");
+                firstPlayer = false;
+                break;
+            }
+        }
+   
+        // set the flag for this player
+        // we cannot just add the property to the player but need to re-assign the entire hashtable to distribute the changes
+        ExitGames.Client.Photon.Hashtable playerProperties = new ExitGames.Client.Photon.Hashtable();
+        playerProperties.Add(firstPlayerFlag, firstPlayer);
+        PhotonNetwork.LocalPlayer.SetCustomProperties(playerProperties);
+   
+        float cellSize = 1 / 8f;
+   
+        // determine which side the player should be on
+        float playerDirection;
+        if (firstPlayer)
+        {
+            playerDirection = 1;
+        }
+        else
+        {
+            playerDirection = -1;
+        }
+   
+        // place the playing pieces
+        Vector3 leftBottomStartPosition = new Vector3(playerDirection * -0.5f, 0.5f, playerDirection * -0.5f);
+   
+        for (int row = 0; row &lt; 3; row++)
+        {
+            for (int column = row % 2; column &lt; 8; column+=2)
+            {
+                // create a networked insteance of the gamepiece
+                // set the position and rotation to default values since we will first parent the object to the board
+                // and then change the position relative to the board
+                GameObject gamePiece = PhotonNetwork.Instantiate("GamePiece", Vector3.zero, Quaternion.identity, 0);
+                // parent the piece to the board
+                gamePiece.transform.parent = transform;
+            
+                Vector3 localPiecePosition = new Vector3(
+                    playerDirection * (cellSize * column + cellSize / 2f),
+                    0,
+                    playerDirection * (cellSize * row + cellSize / 2f)
+                    );
+                gamePiece.transform.localPosition = leftBottomStartPosition + localPiecePosition;
+            }
+        }
+   
+        // the second player starts on the opposite side of the board
+        if (!firstPlayer)
+        {
+            mixedRealityPlayspace.position = new Vector3(0, 0, 4);
+            mixedRealityPlayspace.eulerAngles = new Vector3(0, 180, 0);
+        }
+    }
+}
+</code></pre>
+
+    <p>The <code class="highlighter-rouge">Start()</code> method is executed when the player enters the scene.
+Initially, we determine on which side of the board the player will start.
+This is done by checking the custom properties of the players.
+Only the first player will have a custom property “FirstPlayer” which is set to <code class="highlighter-rouge">true</code>.
+This property is set for all players when they enter the scene because we assign the custom property in this script.
+Custom properties are automatically synced between participants.
+This method is stable so that players can leave and join during a match.
+No matter who joins and leaves, new players will always be placed on the empty side of the board.
+The second part of the setup procedure places the playing stones on the board.
+We use <code class="highlighter-rouge">PhotonNetwork.Instantiate</code> instead of <code class="highlighter-rouge">GameObject.Instantiate</code> so that the object is shared between participants.
+The position is set relative to the playing board.
+Finally, we place the camera on the opposite end of the board if this is the second player.</p>
+  </li>
+  <li>We still need to establish the reference to the public variable <em>MixedReality Playspace</em>.
+Select the <em>PlayingField</em> GameObject.
+Next, drag-and-drop the GameObject entry of the <em>MixedReality Playspace</em> from the hierarchy into the inspector and onto the <em>Mixed Realiy Playspace</em> field.</li>
+  <li>The next step is to add the interaction so that the user can move the object.
+Open the <em>GamePiece</em> prefab again and add a component <em>Object Manipulator</em>.
+This component is from the Mixed Reality Toolkit and allows users to drag objects through the scene.</li>
+  <li>The playing pieces should rest on the board.
+However, if we give users free movement options, the stones can also be placed in mid-air.
+Hence, we can add a constraint to the <em>Object Manipulator</em>.
+In the inspector, the component has a section <em>Constraints</em>.
+Click the dropdown menu below it and select <em>MoveAxisContraint</em>.
+This will add a <em>Move Axis Constraint</em> component below the <em>ObjectManipulator</em> component in the inspector.
+In the <em>Move Axis Constraint</em>, set the <em>Constraint on Movement</em> to <em>Y Axis</em>.
+This disallows up and down movement of the pieces so that they will always stay flat on the playing board.</li>
+  <li>
+    <p>Now, we can implement the upgrade functionality which toggles between a man, symbolized by one play stone, and a king who consists of two stacked stones.
+We have already set up the prefab with two pieces on top of each other, so all we have to do in the script is to deactivate the top piece.
+Create a script <code class="highlighter-rouge">PieceStateManager</code> which will take care of this.
+Implement the following code in this script:</p>
+
+    <pre><code class="language-[C#]">using Microsoft.MixedReality.Toolkit.UI;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+   
+public class PieceStateManager : MonoBehaviour
+{
+    public GameObject topStone;
+   
+    public bool IsKing
+    {
+        get =&gt; topStone.activeSelf;
+        private set =&gt; topStone.SetActive(value);
+    }
+   
+    public void SetIsKingLocal(bool value)
+    {
+        IsKing = value;
+        // TODO: add network broadcast to notify clients
+    }
+   
+    public void SetIsKingRemote(bool value)
+    {
+        IsKing = value;
+    }
+   
+    private void Start()
+    {
+        SetIsKingLocal(false);
+    }
+   
+    public void ToggleState()
+    {
+        SetIsKingLocal(!IsKing);
+    }
+}
+</code></pre>
+
+    <p>This script establishes the semantic connection between the top stone in the stack and a king.
+Instead of making the setter public, add two set-methods <code class="highlighter-rouge">SetIsKingLocal</code> and <code class="highlighter-rouge">SetIsKingRemote</code>.
+We will need them later to distinguish where a value change has originated.
+If it is a local change, i.e. the user has upgraded one of their stones, we will need to broadcast this information to all other clients.
+Remote changes, i.e. received changes will need to use the <code class="highlighter-rouge">SetIsKingRemote</code> method which just changes the value but does not trigger another broadcast of values.
+Otherwise, we would get a never-ending cascade of network messages.
+Also add a method <code class="highlighter-rouge">ToggleState</code> which is used to switch the current state.
+We will call this method if the user triggers the corresponding action on the play piece.
+We will later return to this script to implement the networking features.</p>
+  </li>
+  <li><code class="highlighter-rouge">PieceStateManager</code> only gives us the connection between the piece logic and the visual representation.
+We still need to give the user a way to switch between the man and king representation.
+To do this, the user will be able to tap on the playing stone and it will toggle between man and king.
+So, implement a new script <code class="highlighter-rouge">ClickRecognizer</code> which will allow us to recognize taps on the object.
+Add the script to the <em>GamePiece</em> prefab.</li>
+  <li>
+    <p>Implement the following code in the script:</p>
+
+    <pre><code class="language-[C#]">using Microsoft.MixedReality.Toolkit.Input;
+using UnityEngine;
+   
+public class ClickRecognizer : MonoBehaviour, IMixedRealityPointerHandler
+{
+    PieceStateManager stateManager;
+   
+    private float startTime;
+   
+    private void Start()
+    {
+        stateManager = GetComponent&lt;PieceStateManager&gt;();
+    }
+   
+    public void OnPointerClicked(MixedRealityPointerEventData eventData)
+    {
+        float endTime = Time.time;
+        if (endTime - startTime &lt; 0.4f)
+        {
+            stateManager.ToggleState();
+        }
+    }
+   
+    public void OnPointerDown(MixedRealityPointerEventData eventData)
+    {
+        startTime = Time.time;
+    }
+   
+    public void OnPointerDragged(MixedRealityPointerEventData eventData)
+    {
+    }
+   
+    public void OnPointerUp(MixedRealityPointerEventData eventData)
+    {
+    }
+}
+
+</code></pre>
+
+    <p>We can use the <code class="highlighter-rouge">IMixedRealityPointerHandler</code> to react to tap input.
+Usually, we could just implement our logic in <code class="highlighter-rouge">OnPointerClicked</code> but in this case, we have a conflict with the <code class="highlighter-rouge">ObjectManipulator</code> component.
+Manipulation gestures where the user drags an object across the scene also count as pointer events which raise the <code class="highlighter-rouge">OnPointerClicked</code> method.
+Therefore, add a time check where the timestamp at the beginning of the pointer action is recorded and compared to the time at the end of the pointer action.
+Only if the entire gesture happens within 400ms, it is recognized as a tap.</p>
+  </li>
+  <li>As a last tweak in the setup routine, we initialize the playing pieces.
+We need to set the colour of the playing piece based on its owner.
+We do not actually need to synchronize the colour itself because we can simply reconstruct it from data that we already get.
+If a networked object is created in a scene, the player who created the object automatically becomes its owner.
+The owner can be read from the <em>PhotonView</em> component.
+So, make sure that there is a <em>PhotonView</em> component on the <em>GamePiece</em> prefab.
+Create a new script <code class="highlighter-rouge">PieceInitializer</code> and attach it to the <em>GamePiece</em> prefab.</li>
+  <li>
+    <p>Paste the following code into the <code class="highlighter-rouge">PieceInitializer</code> script:</p>
+
+    <pre><code class="language-[C#]">using Microsoft.MixedReality.Toolkit.Experimental.UI;
+using Photon.Pun;
+using UnityEngine;
+    
+public class PieceInitializer : MonoBehaviourPun
+{
+    private void Start()
+    {
+        bool isFirstPlayer = (bool)photonView.Owner.CustomProperties[BoardInitializer.firstPlayerFlag];
+    
+        Renderer[] renderers = GetComponentsInChildren&lt;Renderer&gt;(true);
+    
+        for (int i=0;i&lt;renderers.Length;i++)
+        {
+            if (isFirstPlayer)
+            {
+                renderers[i].material.color = new Color(0.9f, 0.9f, 0.9f);
+            }
+            else
+            {
+                renderers[i].material.color = new Color(0.1f, 0.1f, 0.1f);
+            }
+        }
+    
+        if (!photonView.IsMine)
+        {
+            GetComponent&lt;ObjectManipulator&gt;().enabled = false;
+            GetComponent&lt;ClickRecognizer&gt;().enabled = false;
+        }
+    }
+}
+</code></pre>
+
+    <p>The script inherits from <code class="highlighter-rouge">MonoBehaviourPun</code>.
+This class inherits from <code class="highlighter-rouge">MonoBehaviour</code> but also fetches a reference to a <code class="highlighter-rouge">PhotonView</code> component.
+The script reads the owner using <code class="highlighter-rouge">photonView.Owner</code>.
+Just like the board setup, it checks who the first player is by querying the custom properties of that player.
+After that, it fetches all renderers, i.e. the renderers of the two cylinders which make up the playing stone.
+It sets the colour on the render’s material, either to a light or a dark tone.
+Additionally, the initialization of the pieces can be used to disallow users to move pieces which are not their own.
+By checking <code class="highlighter-rouge">photonView.isMine</code>, we can find out if a GameObject is owned by the local player on this client.
+If it is not owned by the local player, we deactivate the two scripts which provide user interaction.
+This way, a playing stone can only be moved or upgraded by the player who owns it.</p>
+  </li>
+</ol>
+
+<h4 id="Observables">5 - Synchronizing Data with Observables</h4>
+
+<p>At this point, the players can find a random room, enter the room and are presented with a playing field where their own side is correctly set up with playing pieces.
+The playing pieces can be moved and they can be upgraded to kings.
+However, the movement and the state of the playing piece are not yet synchronized.
+In this section, we will tackle the movement synchronization in two alternative ways using observable components.
+Photon provides pre-made components which synchronize common properties like the positon, rotation and scale.
+They can simply be added to a GameObject and work.
+The second alternative will demonstrate how to synchronize these data using a custom observable.</p>
+
+<ol>
+  <li>In Unity’s assets browser, navigate to the prefabs folder and open the GamePiece prefab by double-clicking on it.</li>
+  <li>The central component which is necessary to synchronize GameObjects with Photon is the <em>Photon View</em>.
+Select the root GameObject of the prefab and in the inspector, add the <em>Photon View</em> component.
+It acts as an observer which is able to monitor other components on the GameObjects and can broadcast their changes over the network.</li>
+  <li>
+    <p>This step is divided into two alternative components that can be monitored by the <em>Photon View</em>.
+The pre-defined Photon Transform View does not require any programming but only gives the standard options per GameObjects.
+Own observables give more flexibility but require implementation work.
+<em>After the steps for one of the alternatives, continue with step 4.</em></p>
+
+    <p><strong>Alternative 1:</strong> Pre-defined Photon Transform View</p>
+    <ol>
+      <li>Select the root GameObject and add a component “Photon Transform View” in the inspector.
+It can be used to synchronize the position, rotation and scale of a GameObject.</li>
+      <li>The play stones cannot be rotated or scaled by the player.
+Hence, it is sufficient to only check position and to uncheck rotation and scale.</li>
+    </ol>
+
+    <p><strong>Alternative 2:</strong> Implementing your own Observable</p>
+    <ol>
+      <li>Create a new script <em>PositionSyncronizer</em>.</li>
+      <li>The script should inherit from MonoBehaviour and it should implement the <code class="highlighter-rouge">IPunObservable</code> interface from the <code class="highlighter-rouge">Photon.Pun</code> namespace.</li>
+      <li>
+        <p>Implement the interface’s method <code class="highlighter-rouge">OnPhotonSerializeView(Stream stream, PhotonMessageInfo info)</code>.
+The method is called regularly and we can write data to the given stream.
+Thus, the method is responsible for sending and receiving.
+To decide if we need to write to the stream or read from it, the given stream argument provides a property <code class="highlighter-rouge">isWriting</code>.
+One can write to the stream using the <code class="highlighter-rouge">SendNext(...)</code> method and objects can be retrieved using the <code class="highlighter-rouge">ReceiveNext()</code> method.
+If multiple values are serialized, the order in which they are written and read needs to be the same.
+This leads to the following piece of code to synchronize the position:</p>
+
+        <pre><code class="language-[C#]">public class PositionSynchronizer : MonoBehaviour, IPunObservable
+{
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(transform.position);
+        }
+        else
+        {
+            transform.position = (Vector3)stream.ReceiveNext();
+        }
+    }
+}
+</code></pre>
+      </li>
+      <li>If you move the object on one client and watch the object on another, you will notice that the remote participant will see the movement but it is not a smooth movement.
+This is due to the fact that the position is only sent ten times per second which is not enough to create a smooth movement.
+A possible fix is to smoothly interpolate towards the position (also see “Common Challenges of Networking” at the top).
+However, the movement smoothing is beyond the scope of this tutorial.
+There are sophisticated ways to smooth the movement which avoid a “rubber-banding” effect, e.g. by also synchronizing the object’s velocity vector to predict where the object will move.</li>
+    </ol>
+  </li>
+  <li>The Photon View component has a list <em>Observed Components</em> at the bottom.
+You can add components which implement the <code class="highlighter-rouge">IPunObservable</code> interface.
+The Photon View will repetitively call the serialization methods and observe the serialized values.
+Drag-and-drop either the pre-defined <em>Photon Transform View</em> or the own implemented observable into this list.</li>
+</ol>
+
+<h4 id="RPCs">6 - Synchronizing Data with Remote Procedure Calls</h4>
+
+<p>At this point, we can move the play stones around on the board and we can see if the opponent moves his or her playing stones.
+However, one last sharing feature is missing:
+If you tap on a play stone, it will switch between a man and a king locally but the other participants are unable to see this change.
+As with any value, there are multiple ways to synchronize the data.
+We have already seen observables which are suitable for synchronizing values which change often.
+We could also synchronize the current status of the play piece using observables.
+However, the change from man to king only happens occasionally, so there is no need to create an observable that is serialized multiple times per second.
+Instead, we will use Remote Procedure Calls (RPCs) to broadcast the change.</p>
+
+<ol>
+  <li>Create a new script <code class="highlighter-rouge">PieceStateSynchronizer</code> and attach it to the root object of the <em>PlayPiece</em> prefab.</li>
+  <li>Like observables, RPCs require a <em>PhotonView</em> component.
+Make sure that there is a <em>PhotonView</em> object on the same GameObject.</li>
+  <li>
+    <p>In the script, change the base class from <code class="highlighter-rouge">MonoBehaviour</code> to <code class="highlighter-rouge">MonoBehaviourPun</code>.
+This requires the using-directive <code class="highlighter-rouge">using Photon.Pun</code>.
+This way, the script already contains a reference to the <em>PhotonView</em> component and we do not need to fetch it ourselves.</p>
+  </li>
+  <li>Create a method <code class="highlighter-rouge">void BroadcastStoneState()</code>.
+We will call this method if the stone changes between man and king.</li>
+  <li>
+    <p>Add the following method body to the <code class="highlighter-rouge">BroadcastStoneState()</code> method:</p>
+
+    <pre><code class="language-[C#]">public void BroadcastStoneState()
+{
+    if (pieceStateManager == null)
+    {
+        pieceStateManager = GetComponent&lt;PieceStateManager&gt;();
+    }
+   
+    photonView.RPC("ReceiveStoneState", RpcTarget.Others, pieceStateManager.IsKing);
+}
+</code></pre>
+
+    <p>First, we get a reference to the <em>PieceStateManager</em> component, if we have not cached it already.
+This way, we can access the current state and can tell if the stone is a man or a king.
+The last line invokes an RPC with the name <em>ReceiveStoneState</em> and sends it to all other connected clients.
+As an argument, it passes in the status of the stone which we defined in the <code class="highlighter-rouge">StoneStateManager</code>.</p>
+  </li>
+  <li>
+    <p>We now need to create the method <code class="highlighter-rouge">void ReceiveStoneState(...)</code> which is invoked by the RPC.
+Make sure that the method’s name is exactly the same as the string from the RPC in the previous step.
+It is important that we tell Photon that this is a method that can be called by remote clients.
+To achieve this, insert the attribute <code class="highlighter-rouge">[PunRPC]</code> in the line above the method definition.
+The method gets <em>two</em> arguments: The first one is <code class="highlighter-rouge">bool isKing</code>.
+The type corresponds to the type that we passed in when we called the RPC.
+The second argument is <code class="highlighter-rouge">PhotonMessageInfo info</code>.
+It provides additional information about the RPC call.
+In the method’s body, set <code class="highlighter-rouge">stoneStateManager.IsKing</code> to the given value.
+Overall, this leads to the following piece of code:</p>
+
+    <pre><code class="language-[C#]">[PunRPC]
+private void ReceiveStoneState(bool isKing, PhotonMessageInfo info)
+{
+    if (pieceStateManager == null)
+    {
+        pieceStateManager = GetComponent&lt;PieceStateManager&gt;();
+    }
+    Debug.Log("Received RPC from " + info.Sender.ActorNumber + "; isKing: " + isKing);
+    pieceStateManager.SetIsKingRemote(isKing);
+}
+</code></pre>
+
+    <p>Again, we get a reference to the <em>PieceStateManager</em> if we do not have it already.
+After that, we can apply the remote changes that we received using its remote setter.</p>
+  </li>
+  <li>
+    <p>The last step is to trigger the broadcast if the piece’s state is changed.
+We already prepared a “TODO” comment in the <code class="highlighter-rouge">PieceStateManager</code> in its <code class="highlighter-rouge">SetIsKingLocal(...)</code> method.
+This set-method is called if a local script changes the piece’s state, e.g. by user interaction.
+The synchronization is handled by the <code class="highlighter-rouge">PieceStateSynchronizer</code> component.
+Hence, we need a reference to it.
+Create a private variable <code class="highlighter-rouge">private PieceStateSynchronizer stateSynchronizer;</code>.
+After that, replace the “TODO” comment line with the following piece of code:</p>
+
+    <pre><code class="language-[C#]">if (stateSynchronizer == null)
+{
+    stateSynchronizer = GetComponent&lt;PieceStateSynchronizer&gt;();
+}
+stateSynchronizer.BroadcastStoneState();
+</code></pre>
+
+    <p>This part fetches the reference if it has not yet been cached.
+After that the broadcast-call that we just created is called to transmit the information to all participants.</p>
+  </li>
+</ol>
+
+<p>This concludes the tutorial.
+You should now have a board game where remote players are matched up at random.
+Once they are in a room, they can move their own play stones on a board and can upgrade their pieces.
+Any of these changes can be seen by the other player.</p>
+
+<h4 id="furtherIdeas">Some Ideas on How to Proceed</h4>
+
+<p>The example project can be extended by a number of advanced steps.
+They are not covered in this tutorial since they require a lot more implementation work</p>
+
+<ul>
+  <li><strong>Login Button</strong>: In the start scene, you can add a login button so that players will only join a room once they are ready.
+Consequently, the connection procedure would be changed so that the client automatically connects to the server but does not immediately try to enter a room.</li>
+  <li><strong>Logout Button</strong>: Similarly, the main scene can have a logout button so that players can leave a room again, e.g. to find a new match.
+The logout command is <code class="highlighter-rouge">PhotonNetwork.LeaveRoom()</code> which returns the user to the lobby.</li>
+  <li><strong>Room Management</strong>: Photon can provide a list of available rooms.
+You can visualize this list in the application and you can join a specific room by passing its name in the <code class="highlighter-rouge">JoinRoom</code> method.</li>
+  <li><strong>Owner Transfer</strong>: At the moment, the stones have a fixed owner, meaning that they can only be moved by that owner.
+In this example this makes sense as you are only allowed to move your own play pieces.
+However for other examples, the owner can be changed by switching the owner option in the <em>PhotonView</em> component from <em>Fixed</em> to <em>Takeover</em> or <em>Request</em>.
+In code, the ownership can be transferred, e.g. if a player starts moving the stone.</li>
+  <li><strong>Avatars</strong>: The same way that we synchronized the playing stones, we can also synchronize the position and rotation of the head-mounted display.
+If we connect this information with some avatar representation, we can visualize remote users in the shared environment.</li>
+</ul>
+
+<h3 id="testing-on-one-pc">Testing on one PC</h3>
+
+<p>Of course, collaborative applications can be tested on two PCs or devices by running the application on each device.
+However, the shared application can also be tested directly on one development PC.
+We need to overcome the problem that a Unity project can only be opened by one editor instance at a time.
+It is possible to open multiple Unity instances but they cannot open the same project simultaneously.
+To solve this, we can duplicate the entire project’s folder to a different location on disk.
+After that, you can open the duplicated folder in Unity as a separate project.
+In the Unity Hub this can be done by selecting “Add” and by navigating to the duplicated folder.
+You should now have two instances of Unity with the original project and a copy of it.
+The two editors can be placed next to each other on the screen or on separate screens.
+If both editors are in Play Mode, one can see the shared application states side-by-side.
+With this approach, you need to make sure that you do not confuse the two project copies.
+Any changes that you make in one editor need to be duplicated to the copied project manually.</p>
+
+<p>There are several options to duplicate the project and to copy changes between the two versions.
+You can manually copy the files from one instance to the other.
+Copying an entire Unity project can take quite long as it contains many small cache files.
+You can shorten the copy-time by only copying selected files.
+Intially, you only need to copy the folders <em>Assets</em>, <em>Packages</em> and <em>ProjectSettings</em>.
+All other folders, e.g. <em>Library</em> or <em>obj</em> can be reconstructed by Unity.</p>
+
+<p>Alternatively, you can set up a Git repository for the project.
+Use a <a href="https://github.com/github/gitignore/blob/master/Unity.gitignore">.gitignore-file for Unity</a> so that only necessary files are stored.
+Set up a remote repository, e.g. on GitHub or Gitlab.
+After that, commit the current status and push it to the remote repository.
+Clone the remote repository into another folder to obtain the copy.
+Once you make changes to ony of the two copies, commit them and push the changes to the remote repository.
+In the other project instance, you can pull the changes.
+This appraoch using Git has the advantage that you can synchronize the two project instances by a few Git commands.
+Since Git only uploads and downloads the changes, this process is quicker than the approach where files are manually copied.</p>
+
+<p>If you are using this setup, it is generally advisable to keep the two project instances separated.
+You should always edit the same project.
+The other project should just be a read-only copy that is for testing.
+If you view the projects side-by-side, you should always assign the same side for the development project so that you do not accidentally edit both copies.</p>
+
+<h3 id="VIAProMa">Example Application for Sharing: VIAProMa</h3>
+
+<p><a href="https://github.com/rwth-acis/VIAProMa">VIAProMa</a> is an open-source framework for collaborative visual analytics in the field of project management.
+It provides a shared virtual environment where remote participants can collaborate using the Microsoft HoloLens, HTC Vive, as well as Android smartphones and tablets.
+As such, it provides more examples and more complex implementations of shared features using the Photon library.
+For instance, VIAProMa utilizes Photon to realize a room system where users can create their own rooms and they can select existing rooms to join them.
+Moreover, VIAProMa implements an <em>Owner Manager</em> which is able to transfer the ownership of a virtual object to other users by a series of RPCs.
+By default, GameObjects only exist in a room as long as the user who created it is in the room.
+VIAProMa realizes more durable GameObjects.
+Users who want to instantiate an object send an RPC to the master client.
+The master client can create GameObjects which are tied to the lifetime of the room.
+After that, a pointer to the GameObject is returned to the calling client so that it can further process the GameObject.
+It realizes a Mixed Reality text chat with the corresponding UI and utilizes Photon Voice to create a voice chat.
+VIAProMa is able to visualize remote participants as customizable avatars.
+The avatar’s position and head rotation is synchronized with the position of the device.
+The customization of the avatar is realized using custom user properties.</p>
+
+<p>Since the code for VIAProMa is available on GitHub under an open-source license, you can inspect and adapt this project and its implementation to create your own shared applications.</p>
+
+  </div>
+
+</article>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">The Open Augmented Reality Teaching Book</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li>The Open Augmented Reality Teaching Book</li>
+          <li><a href="mailto:klamma@dbis.rwth-aachen.de">klamma@dbis.rwth-aachen.de</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          <li>
+            <a href="https://twitter.com/AR_FOR_EU"><span class="icon icon--twitter"><svg viewBox="0 0 16 16"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">AR_FOR_EU</span></a>
+
+          </li>
+          <li>
+            <a href="/ar-for-eu-book/feed.xml"><span class="icon icon-rss"><?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"> 
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="128px" height="128px" id="RSSicon" viewBox="0 0 256 256">
+<defs>
+<linearGradient x1="0.085" y1="0.085" x2="0.915" y2="0.915" id="RSSg">
+<stop  offset="0.0" stop-color="#E3702D"/><stop  offset="0.1071" stop-color="#EA7D31"/>
+<stop  offset="0.3503" stop-color="#F69537"/><stop  offset="0.5" stop-color="#FB9E3A"/>
+<stop  offset="0.7016" stop-color="#EA7C31"/><stop  offset="0.8866" stop-color="#DE642B"/>
+<stop  offset="1.0" stop-color="#D95B29"/>
+</linearGradient>
+</defs>
+<rect width="256" height="256" rx="55" ry="55" x="0"  y="0"  fill="#CC5D15"/>
+<rect width="246" height="246" rx="50" ry="50" x="5"  y="5"  fill="#F49C52"/>
+<rect width="236" height="236" rx="47" ry="47" x="10" y="10" fill="url(#RSSg)"/>
+<circle cx="68" cy="189" r="24" fill="#FFF"/>
+<path d="M160 213h-34a82 82 0 0 0 -82 -82v-34a116 116 0 0 1 116 116z" fill="#FFF"/>
+<path d="M184 213A140 140 0 0 0 44 73 V 38a175 175 0 0 1 175 175z" fill="#FFF"/>
+</svg>
+</span><span class="username">Subscribe</span></a>
+
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        <p>The Open Augmented Reality Teaching Book</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+    <!-- load visualizations (at the end so that the div elements are known here) -->
+    
+  </body>
+
+</html>

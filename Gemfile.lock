@@ -1,0 +1,77 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    addressable (2.5.2)
+      public_suffix (>= 2.0.2, < 4.0)
+    bibtex-ruby (4.4.7)
+      latex-decode (~> 0.0)
+    citeproc (1.0.10)
+      namae (~> 1.0)
+    citeproc-ruby (1.1.12)
+      citeproc (~> 1.0, >= 1.0.9)
+      csl (~> 1.5)
+    colorator (1.1.0)
+    csl (1.5.2)
+      namae (~> 1.0)
+    csl-styles (1.0.1.10)
+      csl (~> 1.0)
+    ffi (1.13.1)
+    forwardable-extended (2.6.0)
+    jekyll (3.4.0)
+      addressable (~> 2.4)
+      colorator (~> 1.0)
+      jekyll-sass-converter (~> 1.0)
+      jekyll-watch (~> 1.1)
+      kramdown (~> 1.3)
+      liquid (~> 3.0)
+      mercenary (~> 0.3.3)
+      pathutil (~> 0.9)
+      rouge (~> 1.7)
+      safe_yaml (~> 1.0)
+    jekyll-sass-converter (1.5.2)
+      sass (~> 3.4)
+    jekyll-scholar (5.16.0)
+      bibtex-ruby (~> 4.0, >= 4.0.13)
+      citeproc-ruby (~> 1.0)
+      csl-styles (~> 1.0)
+      jekyll (~> 3.0)
+    jekyll-watch (1.5.1)
+      listen (~> 3.0)
+    kramdown (1.17.0)
+    latex-decode (0.3.2)
+    liquid (3.0.6)
+    listen (3.2.1)
+      rb-fsevent (~> 0.10, >= 0.10.3)
+      rb-inotify (~> 0.9, >= 0.9.10)
+    mercenary (0.3.6)
+    namae (1.0.1)
+    pathutil (0.16.2)
+      forwardable-extended (~> 2.6)
+    public_suffix (3.1.1)
+    rb-fsevent (0.10.4)
+    rb-inotify (0.10.1)
+      ffi (~> 1.0)
+    rouge (1.11.1)
+    safe_yaml (1.0.5)
+    sass (3.7.4)
+      sass-listen (~> 4.0.0)
+    sass-listen (4.0.0)
+      rb-fsevent (~> 0.9, >= 0.9.4)
+      rb-inotify (~> 0.9, >= 0.9.7)
+    sassc (2.4.0)
+      ffi (~> 1.9)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  addressable (= 2.5.2)
+  jekyll (= 3.4.0)
+  jekyll-scholar
+  sassc
+
+RUBY VERSION
+   ruby 2.7.2p137
+
+BUNDLED WITH
+   2.0.2

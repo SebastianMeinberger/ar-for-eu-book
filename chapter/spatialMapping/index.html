@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html>
+
+  ﻿<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Spatial Mapping, Gaze, and Gestures</title>
+    <meta name="description" content="The Open Augmented Reality Teaching Book">
+
+    <link rel="stylesheet" href="/ar-for-eu-book/css/main.css">
+    <link rel="canonical" href="https://klamma.github.io/ar-for-eu-book/chapter/spatialMapping/">
+    <link rel="alternate" type="application/rss+xml" title="The Open Augmented Reality Teaching Book" href="https://klamma.github.io/ar-for-eu-book/feed.xml">
+
+    <!-- Favicon head tag -->
+    <link rel="shortcut icon" href="/ar-for-eu-book/favicon.ico" type="image/x-icon">
+
+    <!-- Visualization Libraries -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+    <!-- formula rendering -->
+    <script type="text/javascript" async
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/ar-for-eu-book/">The Open Augmented Reality Teaching Book</a>
+
+    <nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </a>
+
+      <div class="trigger">
+	  <a class="page-link" href="https://codereality.net/">Code Reality</a>
+          <a class="page-link" href="/ar-for-eu-book/posts">Blog Posts</a>
+          <a class="page-link" href="/ar-for-eu-book/toc">Table of Content</a>
+          <a class="page-link" href="/ar-for-eu-book/references">Bibliography</a>
+          <a class="page-link" href="/ar-for-eu-book/contrib">Contributors</a>
+          <a class="page-link" href="/ar-for-eu-book/about">About</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Spatial Mapping, Gaze, and Gestures</h1>
+  </header>
+
+  <div class="post-content">
+    
+<p><em>by Dr Fridolin Wild, Performance Augmentation Lab, Oxford Brookes University</em></p>
+
+<h2 id="contents">Contents</h2>
+<ul>
+  <li><a href="#part-1-spatial-mapping-prefabs-config">Part 1. Spatial Mapping - Prefabs and Configuration</a></li>
+  <li><a href="#part-2-spatial-mapping-ui-room-scan">Part 2. Spatial Mapping - UI for room scans</a></li>
+  <li><a href="#part-3-placement">Part 3. Placement with the gaze pointer and air tap</a></li>
+  <li><a href="#part-4-hover">Part 4. Hover highlighting and tap interaction</a></li>
+</ul>
+
+<p>The capability to map and understand the spatiality of the physical environment surrounding us of the new Smart Augmented Reality Glasses like the Microsoft Hololens or the Magic Leap is a game changer.
+For the first time, this enables pervasive experiences with an optical quality that causes our perception to sometimes struggle to distinguish what is real and what not.</p>
+
+<p>At the same time, this has triggered a paradigm change in Human Computer Interaction, with gaze pointers and gesture control replacing swipes &amp; taps (and mouse pointing and clicking).</p>
+
+<p>In this tutorial, we will be looking into how to set up these three functionalities:
+spatial mapping (aka ‘room scanning’), gaze navigation, and ‘click’ activation using air-tapping gestures.</p>
+
+<p>The tutorial closes with configuration information on how to set up Unity3D, Visual Studio, and all the needed packages, modules, and SDKs.
+In theory, this tutorial in itself should enable you to get started from scratch and take you far enough to build your first ‘hello world’ app - with the world being your own personal reality you created :).</p>
+
+<h2 id="part-1-spatial-mapping-prefabs-config">Part 1. Spatial Mapping - Prefabs and Configuration</h2>
+
+<p>Clean up the game object Hierarchy and delete the camera and the directional light.
+We will replace these with the correct ones.</p>
+
+<p>For this, import the HoloToolkit 2017.4.3.0 (see configuration section at the end of this tutorial):
+in the menu, call Assets &gt; Import Package &gt; Custom Package.
+Once all files are imported, you should see a new folder “HoloToolkit” in your Project file browser.</p>
+
+<p>Search in the Project explorer now for “HoloLensCamera” and drag and drop this prefab into the game object Hierarchy.</p>
+
+<p>Now create an empty game object (Create &gt; Create empty) in the game object Hierarchy and rename it to HoloToolkit.
+This is to make sure we keep things nice and tidy and have no difficul-ty finding our game objects and scripts later.</p>
+
+<p>Now search in the Project explorer for Spatial Mapping, then InputManager, also InteractiveMeshCursor, and SpatialUnderstanding.
+Add all four to the project Hierarchy.
+Your Hierarchy looks now like the one depicted to the left.</p>
+
+<p><img src="../../assets/figures/mapgazegesture/1 - htk import and hierarchy setup.png" alt="1 - htk import and hierarchy setup" /></p>
+
+<p>Let’s go through them.
+We have replaced the standard camera with the HololensCamera - as every Unity project uses a camera to define how to render the scene.</p>
+
+<p>The other prefabs we added support us in scanning the room (and - potentially - cleaning up the meshes scanned with the Spatial Understanding).
+They help with the gaze and gesture interaction (InputManager).
+And a cursor was selected to visualise where (and what) the gaze cursor (kind of ‘3D mouse pointer’) rests upon in the environment.</p>
+
+<p>We select the SpatialMapping game object and look at the Inspector to set the number of Triangles Per Cubic meter to 100 only (this will give us less precise meshes, but they will be much faster).
+Make sure that the Physics Layer is 31, and that the Surface Material is set to Wireframe (there are cool shaders available to pimp this visually).
+Deactivate the “Auto Start Observer” - we will build our own user interface (UI) for starting and stopping the scan.
+Do the same with the SpatialUnderstanding: deactivate the option “Auto Begin Scanning”.</p>
+
+<p>Short cut: If you just want the SpatialMapping to anchor your game objects, you can leave the “Auto Start Observer” and “Auto Begin Scanning” on and ignore the next section on how to build a UI for scanning rooms.</p>
+
+<p><img src="../../assets/figures/mapgazegesture/2 - spatialmapping.png" alt="2 - spatialmapping" /></p>
+
+<p>For the InputManager, there is not much we need to configure.
+Just make sure to drag and drop the InteractiveMeshCursor from the Hierarchy onto the slot “Cursor”.</p>
+
+<p><img src="../../assets/figures/mapgazegesture/3 - inputmanager.png" alt="3 - inputmanager" /></p>
+
+<h2 id="part-2-spatial-mapping-ui-room-scan">Part 2. Spatial Mapping - UI for room scans</h2>
+
+<p>Next, we start building up our own user interface.
+Unity uses a Canvas game object to hold the elements of the user interface together.
+So the first thing we do is to create game object UI &gt; Canvas and rename it to “SpatialMappingCtrlMenu”.</p>
+
+<p><img src="../../assets/figures/mapgazegesture/4 - ctrl menu - create-canvas.png" alt="4 - ctrl menu - create-canvas" /></p>
+
+<p>The scale of 1 is rather big for the small display of the Hololens, so we set x/y/z scale to 0.3.</p>
+
+<p><img src="../../assets/figures/mapgazegesture/4 - ctrl menu - 1 - canvas worldspace.png" alt="Control menu" /></p>
+
+<p>There are different ways of rendering the UI, but for here, we need to set the Canvas to render to World Space (this will also trigger automatically to pick a different Camera in the sub settings for rendering it).</p>
+
+<p>Next, we create three UI &gt; Text game objects and three UI &gt; Button objects.
+We rename the text objects to menuTitle, Instructions, and log.</p>
+
+<p>The buttons are renamed to StartScanningButton, StopScanningButton, StartAppButton.</p>
+
+<p><img src="../../assets/figures/mapgazegesture/4 - ctrl menu - hierarchy.png" alt="Control menu" /></p>
+
+<p>We rearrange the elements in the scene preview by switching to 2D in the Scene and double clicking the SpatialMappingCtrlMenu canvas in the Hierarchy.
+Arrange them to something like this:</p>
+
+<p><img src="../../assets/figures/mapgazegesture/4 - ctrl menu - preview.png" alt="Control menu: scene" /></p>
+
+<p>The menu canvas needs to face always to the user (‘billboard’) and follow the user around (‘tag-along’, so we search for the HoloToolkit Tagalong and Billboard scripts and attach them to the canvas.</p>
+
+<p><img src="../../assets/figures/mapgazegesture/4 - ctrl menu - canvas - tagalong billboard.png" alt="Control menu: scene" /></p>
+
+<p>We now import the tutorial unity package (“itss tutorial 1.unitypackage”).
+Once imported, we add the SpaceScannerManager script (folder “_scripts”) and attach it to the menu canvas.</p>
+
+<p><img src="../../assets/figures/mapgazegesture/4 - ctrl menu - canvas - spacescanner.png" alt="Space Scanner" /></p>
+
+<p>The SpaceScannerManager has several configuration settings.
+We add two mesh map materi-als (search for “WireframeBlue” and “Occlusion” and add them accordingly).
+Moreover, we drag and drop the Text game object log onto the Log slot.
+This allows the SpaceScannerManager script to output log messages onto the area we have foreseen for debug output on the menu canvas.</p>
+
+<p>To fully function, we have to add two more HoloToolkit scripts, “SurfaceMeshesToPlanes” and “RemoveSurfaceVertices”.
+We attach them to the menu canvas as well.</p>
+
+<p><img src="../../assets/figures/mapgazegesture/4 - ctrl menu - canvas - spatial scripts.png" alt="SurfacePlaneToMeshes and RemoveSurfaceVertices" /></p>
+
+<p>We select for Draw Planes and Destroy Planes the option ‘Nothing’ each.
+The SurfaceMesh-esToPlanes script is resonsible for identifying plane surfaces from the raw mesh, detecting floor, walls, tables, and the like.
+It is possible to replace the raw mesh with these identified sur-faces, but we don’t want that, as it makes the preview flicker during the scanning.
+The Re-moveSurfaceVertices is resonsible for thinning out the mesh, where possible.</p>
+
+<p>The SpaceScannerManager script takes care of all this.
+It communicates with the SpatialMap-ping to start and stop the observer responsible for scanning the room mesh, cleaning the mesh once scanned, and checking whether enough surfaces have been scanned (satisfying the min floors and min walls requirements set).
+Moreover, it provides three methods for the buttons to control: StartScanning(), StopScanning(), and StartApp().</p>
+
+<p>The way the SpaceScannerManager class works is: StartScanning() activates the spatial map-ping by starting the according Spatial Mapping observer, setting the “scanning” flag to true (thus calling the planes extraction method in Update() in every frame), and registering a callback to MeshToPlanes() for every time the planes extraction concludes:</p>
+
+<div class="language-c# highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">void</span> <span class="nf">StartScanning</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="n">enoughSpace</span> <span class="p">=</span> <span class="k">false</span><span class="p">;</span>
+<span class="n">scanning</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+<span class="n">SpatialMappingManager</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="nf">SetSurfaceMaterial</span><span class="p">(</span><span class="n">defaultMapMaterial</span><span class="p">);</span>
+<span class="n">SurfaceMeshesToPlanes</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">MakePlanesComplete</span> <span class="p">+=</span> <span class="n">MeshToPlanes</span><span class="p">;</span>
+<span class="n">SpatialMappingManager</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="nf">StartObserver</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="c1">// Update is called once per frame
+</span><span class="k">void</span> <span class="nf">Update</span> <span class="p">()</span> <span class="p">{</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">scanning</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="nf">CreatePlanes</span><span class="p">();</span> <span class="c1">// convert raw mesh to planes
+</span><span class="p">}</span> <span class="c1">// if scanning
+</span><span class="p">}</span> <span class="c1">// Update()
+</span>
+<span class="k">private</span> <span class="k">void</span> <span class="nf">MeshToPlanes</span><span class="p">(</span><span class="kt">object</span> <span class="n">source</span><span class="p">,</span> <span class="n">System</span><span class="p">.</span><span class="n">EventArgs</span> <span class="n">args</span><span class="p">)</span>
+<span class="p">{</span>
+
+<span class="c1">// get floor/table planes
+</span><span class="n">horizontal</span> <span class="p">=</span> <span class="n">SurfaceMeshesToPlanes</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="nf">GetActivePlanes</span><span class="p">(</span><span class="n">PlaneTypes</span><span class="p">.</span><span class="n">Table</span> <span class="p">|</span> <span class="n">PlaneTypes</span><span class="p">.</span><span class="n">Floor</span><span class="p">);</span>
+
+<span class="c1">// get wall planes
+</span><span class="n">vertical</span> <span class="p">=</span> <span class="n">SurfaceMeshesToPlanes</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="nf">GetActivePlanes</span><span class="p">(</span><span class="n">PlaneTypes</span><span class="p">.</span><span class="n">Wall</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">horizontal</span><span class="p">.</span><span class="n">Count</span> <span class="p">&gt;=</span> <span class="n">minFloors</span> <span class="p">&amp;&amp;</span> <span class="n">vertical</span><span class="p">.</span><span class="n">Count</span> <span class="p">&gt;=</span> <span class="n">minWalls</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="c1">// We have enoughSpace floors and walls to place our holograms on...
+</span><span class="n">enoughSpace</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">else</span>
+<span class="p">{</span>
+<span class="c1">// We do not have enoughSpace floors/walls to place our holograms on...
+</span><span class="n">enoughSpace</span> <span class="p">=</span> <span class="k">false</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="p">}</span> 
+
+<span class="k">private</span> <span class="k">void</span> <span class="nf">CreatePlanes</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="n">SurfaceMeshesToPlanes</span> <span class="n">surfaceToPlanes</span> <span class="p">=</span> <span class="n">SurfaceMeshesToPlanes</span><span class="p">.</span><span class="n">Instance</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">surfaceToPlanes</span> <span class="p">!=</span> <span class="k">null</span> <span class="p">&amp;&amp;</span> <span class="n">surfaceToPlanes</span><span class="p">.</span><span class="n">enabled</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="n">surfaceToPlanes</span><span class="p">.</span><span class="nf">MakePlanes</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>StopScanning() then stops the Spatial Mapping Observer.
+Afterwards, the raw mesh is cleaned up by removing triangles (a call to RemoveTriangles).</p>
+
+<p>Finally, StartApp() calls the PopulateSpace singleton’s InstallObjects() method, but only if the space requirements are satisfied (minimum number of floors and minimum number of walls).</p>
+
+<p>These three key methods need to be registered with the on Click events of the corresponding UI button.
+For this, we add (+) an On Click() event to the button and drag and drop the menu canvas game object onto the game object slot.
+Then we can select SpaceScannerManager &gt; StartScanning as the method to call when the button is clicked.</p>
+
+<p><img src="../../assets/figures/mapgazegesture/4 - ctrl menu - 9 button 1 click.png" alt="StartScanning button behaviour" /></p>
+
+<p>We apply the according method calls for StopScanning and StartApp analogously to the other two buttons.</p>
+
+<h2 id="part-3-placement">Part 3. Placement with the gaze pointer and air tap</h2>
+
+<p>The error message we see in the console is telling us that the call to the singleton Popu-lateSpace is not (yet) working.
+No surprise, we haven’t added it yet.</p>
+
+<p>We first create a new empty game object and rename it to ObjectCollection.
+Moreover, we add as a child another canvas, into which we place another Text game object.
+The canvas gets renamed to “UICanvas” and the Text to “log”.
+For the canvas, again, we set the Render Mode to “World Space”, and we add a Billboard and Tagalong script.</p>
+
+<p>We attach two scripts PopulateSpace and GazeGestureManager (from “_scripts”) to the empty game object ObjectCollection.
+For PopulateSpace we drag and drop the log Text game object from the UIcanvas onto the Log slot in the Inspector.</p>
+
+<p><img src="../../assets/figures/mapgazegesture/5 - objectcollection.png" alt="ObjectCollection" /></p>
+
+<p>We have prepared a 3D model prefab, “brain”, which has the Placeable script already attached.
+The Placeable script contains the code needed for conveniently displaying through the use of coloured bounding boxes and shadows, where the user can actually place an object.
+Once a suitable location is found, the user simply airtaps to drop the object.</p>
+
+<p><img src="../../assets/figures/mapgazegesture/6 - brain.png" alt="Brain" /></p>
+
+<p>To connect the brain model prefab with the ObjectCollection, the other configuration slot, “Obj”, gets filled with the brain prefab (folder “_prefabs”).</p>
+
+<div class="language-c# highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">void</span> <span class="nf">InstallObjects</span><span class="p">()</span> <span class="p">{</span>
+
+	<span class="n">GameObject</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">"SpatialMappingCtrlMenu"</span><span class="p">).</span><span class="nf">SetActive</span><span class="p">(</span><span class="k">false</span><span class="p">);</span> <span class="c1">// hide menu
+</span>	<span class="n">SpatialMappingManager</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">DrawVisualMeshes</span> <span class="p">=</span> <span class="k">false</span><span class="p">;</span> <span class="c1">// hide map mesh
+</span>
+	<span class="n">GameObject</span> <span class="n">currObj</span> <span class="p">=</span> <span class="nf">Instantiate</span><span class="p">(</span><span class="n">Obj</span><span class="p">);</span>
+	<span class="n">currObj</span><span class="p">.</span><span class="n">transform</span><span class="p">.</span><span class="n">localScale</span> <span class="p">*=</span> <span class="m">0.5f</span><span class="p">;</span>
+	<span class="n">currObj</span><span class="p">.</span><span class="n">GetComponent</span><span class="p">&lt;</span><span class="n">Placeable</span><span class="p">&gt;().</span><span class="nf">OnSelect</span><span class="p">();</span> <span class="c1">// activate placement mode
+</span><span class="p">}</span>
+</code></pre>
+</div>
+
+<p>This will, once the scanning finished and StartApp() was triggered, execute the InstallObjects() method in the PopulateSpace singleton - there then instantiating a copy of the brain prefab into the scene and triggering its OnSelect method for convenient placement in the environment (on horizontal surfaces only!).</p>
+
+<h2 id="part-4-hover">Part 4. Hover highlighting and tap interaction</h2>
+
+<p>The Placeable behaviour allows to repeatedly pick up the object with an air tap and drop it off at any location desired.
+While this is great for populating the exhibition space, it also prevents us from interacting with the object placed.</p>
+
+<p>To be able to stop the Placeable component script, we therefore first add a ‘EXPLORE BRAIN’ button to the brain prefab, wrapped into a canvas with World Space rendering.
+(We drag and drop the prefab from the Project file explorer into the scene, modify it, and then drag it back to the Project file explorer to replace the prefab with the modified one).</p>
+
+<p><img src="../../assets/figures/mapgazegesture/14 - brain - button.png" alt="'Explore Brain' button" /></p>
+
+<p>Our prefab in the Project explorer now shows that it also has a Canvas (which contains the Button).
+The canvas needs to be resized and properly positioned so that the button floats slightly over the brain model (see picture).</p>
+
+<p><img src="../../assets/figures/mapgazegesture/14 - brain - canvas.png" alt="'Explore Brain' button" /></p>
+
+<p>While we are at it, we also add Mesh Colliders (click ‘Add Component’ and search for it) to each of the brain segments.
+We will need those later so that they can be hit targets in the inter-action.</p>
+
+<p>The Mesh Colliders will automatically be fitted to the shape of the brain segment.</p>
+
+<p><img src="../../assets/figures/mapgazegesture/14 - brain - meshcolliders.png" alt="Mesh colliders" /></p>
+
+<p>Since the button is on the prefab, we need to add an event listener for the ‘on click’ event, oth-erwise nothing will happen upon air tapping the button.
+We therefore modify the InstallObjects() method of the Object Collection game object.
+We find the button object via its name, and then add the according event listener (linking against the new PopulateSpace.ExploreBrain() method shown below).</p>
+
+<div class="language-c# highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">void</span> <span class="nf">InstallObjects</span><span class="p">()</span> <span class="p">{</span>
+
+<span class="n">GameObject</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">"SpatialMappingCtrlMenu"</span><span class="p">).</span><span class="nf">SetActive</span><span class="p">(</span><span class="k">false</span><span class="p">);</span> <span class="c1">// hide Space Scan Ctrl Menu
+</span><span class="n">SpatialMappingManager</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">DrawVisualMeshes</span> <span class="p">=</span> <span class="k">false</span><span class="p">;</span> <span class="c1">// hide Spatial Map Mesh
+</span>
+<span class="n">currObj</span> <span class="p">=</span> <span class="nf">Instantiate</span><span class="p">(</span><span class="n">Obj</span><span class="p">);</span>
+<span class="n">currObj</span><span class="p">.</span><span class="n">transform</span><span class="p">.</span><span class="n">localScale</span> <span class="p">*=</span> <span class="m">0.5f</span><span class="p">;</span>
+<span class="n">currObj</span><span class="p">.</span><span class="n">GetComponent</span><span class="p">&lt;</span><span class="n">Placeable</span><span class="p">&gt;().</span><span class="nf">OnSelect</span><span class="p">();</span> <span class="c1">// activate placement mode
+</span>
+<span class="n">Button</span> <span class="n">b</span> <span class="p">=</span> <span class="n">GameObject</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">"ExploreBrainButton"</span><span class="p">).</span><span class="n">GetComponent</span><span class="p">&lt;</span><span class="n">Button</span><span class="p">&gt;();</span>
+<span class="n">b</span><span class="p">.</span><span class="n">onClick</span><span class="p">.</span><span class="nf">AddListener</span><span class="p">(</span><span class="n">ExploreBrain</span><span class="p">);</span> <span class="c1">// register onClick event with the Button
+</span>
+<span class="n">log</span><span class="p">.</span><span class="n">text</span> <span class="p">+=</span> <span class="s">"Placing object "</span> <span class="p">+</span> <span class="n">Obj</span><span class="p">.</span><span class="n">name</span> <span class="p">+</span> <span class="s">"...\n"</span><span class="p">;</span>
+
+<span class="p">}</span> <span class="c1">// InstallObjects()
+</span></code></pre>
+</div>
+
+<p>This ExploreBrain() method first removes the ‘Explore brain’ button – it is not needed anymore once activated.
+Then it removes the Placeable script, which otherwise would capture all air tapping events (and keep moving the brain around).</p>
+
+<p>Most importantly, the method also removes the Box Collider around the brain, so that the gaze cursor can now penetrate through and rest on the brain segments.</p>
+
+<div class="language-c# highlighter-rouge"><pre class="highlight"><code><span class="k">public</span> <span class="k">void</span> <span class="nf">ExploreBrain</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="c1">// remove the button
+</span><span class="n">GameObject</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">"ExploreBrainButton"</span><span class="p">).</span><span class="nf">SetActive</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+
+<span class="c1">// remove drag &amp; drop placeable script, as otherwise
+// it will interfere with the interaction with the brain segments
+</span><span class="nf">Destroy</span><span class="p">(</span><span class="n">currObj</span><span class="p">.</span><span class="n">GetComponent</span><span class="p">&lt;</span><span class="n">Placeable</span><span class="p">&gt;());</span>
+
+<span class="c1">// remove Box collider, so that gaze cursor passes to child segments
+</span><span class="nf">Destroy</span><span class="p">(</span><span class="n">currObj</span><span class="p">.</span><span class="n">GetComponent</span><span class="p">&lt;</span><span class="n">BoxCollider</span><span class="p">&gt;());</span>
+
+<span class="c1">// attach the interaction script to the brain prefab, so that segments can be clicked
+</span><span class="n">currObj</span><span class="p">.</span><span class="n">AddComponent</span><span class="p">&lt;</span><span class="n">SegmentHighlights</span><span class="p">&gt;();</span>
+
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Finally, a script to highlight the segments (SegmentHighlights) is added by code.
+Let us look into this highlighter script.
+First, the script installs a listener for the gesture recogniser and regis-ters a callback for whenever the air tap gesture has been detected (linking to method ‘on-Tapped’).</p>
+
+<div class="language-c# highlighter-rouge"><pre class="highlight"><code><span class="k">void</span> <span class="nf">Start</span><span class="p">()</span> <span class="p">{</span>
+
+<span class="n">recogniser</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">GestureRecognizer</span><span class="p">();</span>
+<span class="n">recogniser</span><span class="p">.</span><span class="nf">SetRecognizableGestures</span><span class="p">(</span><span class="n">GestureSettings</span><span class="p">.</span><span class="n">Tap</span><span class="p">);</span>
+<span class="n">recogniser</span><span class="p">.</span><span class="n">Tapped</span> <span class="p">+=</span> <span class="n">onTapped</span><span class="p">;</span>
+<span class="n">recogniser</span><span class="p">.</span><span class="nf">StartCapturingGestures</span><span class="p">();</span>
+
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>The onTapped method then uses the standard method to find out what actually has been tapped: cast a ray from the camera position of the head worn camera and then investigate whether this ray actually hit anything (and whether that anything is a game object).</p>
+
+<div class="language-c# highlighter-rouge"><pre class="highlight"><code>
+<span class="k">public</span> <span class="k">void</span> <span class="nf">onTapped</span><span class="p">(</span><span class="n">TappedEventArgs</span> <span class="n">args</span><span class="p">)</span>
+<span class="p">{</span>
+
+<span class="kt">var</span> <span class="n">headPosition</span> <span class="p">=</span> <span class="n">args</span><span class="p">.</span><span class="n">headPose</span><span class="p">.</span><span class="n">position</span><span class="p">;</span>
+<span class="kt">var</span> <span class="n">gazeDirection</span> <span class="p">=</span> <span class="n">args</span><span class="p">.</span><span class="n">headPose</span><span class="p">.</span><span class="n">forward</span><span class="p">;</span>
+
+<span class="n">RaycastHit</span> <span class="n">hitInfo</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">Physics</span><span class="p">.</span><span class="nf">Raycast</span><span class="p">(</span><span class="n">headPosition</span><span class="p">,</span> <span class="n">gazeDirection</span><span class="p">,</span> <span class="k">out</span> <span class="n">hitInfo</span><span class="p">,</span> <span class="m">10.0f</span><span class="p">,</span> <span class="n">Physics</span><span class="p">.</span><span class="n">DefaultRaycastLayers</span><span class="p">))</span> 
+<span class="p">{</span>
+<span class="c1">// If the raycast hit a hologram, use that as the focused object.
+</span><span class="n">FocusedObject</span> <span class="p">=</span> <span class="n">hitInfo</span><span class="p">.</span><span class="n">collider</span><span class="p">.</span><span class="n">gameObject</span><span class="p">;</span>
+
+<span class="kt">string</span><span class="p">[]</span> <span class="n">segs</span> <span class="p">=</span> <span class="p">{</span> <span class="s">"Brain_Part_02"</span><span class="p">,</span> <span class="s">"Brain_Part_04"</span><span class="p">,</span> <span class="s">"Brain_Part_05"</span><span class="p">,</span> <span class="s">"Brain_Part_06"</span> <span class="p">};</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">segs</span><span class="p">.</span><span class="nf">Any</span><span class="p">(</span><span class="n">FocusedObject</span><span class="p">.</span><span class="n">name</span><span class="p">.</span><span class="n">Equals</span><span class="p">))</span>
+<span class="p">{</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">FocusedObject</span><span class="p">.</span><span class="n">name</span> <span class="p">==</span> <span class="s">"Brain_Part_04"</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="n">FocusedObject</span><span class="p">.</span><span class="n">transform</span><span class="p">.</span><span class="nf">Translate</span><span class="p">(</span><span class="n">Vector3</span><span class="p">.</span><span class="n">forward</span> <span class="p">*</span> <span class="m">0.1f</span><span class="p">,</span> <span class="n">Space</span><span class="p">.</span><span class="n">World</span><span class="p">);</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">FocusedObject</span><span class="p">.</span><span class="n">name</span> <span class="p">==</span> <span class="s">"Brain_Part_06"</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="n">FocusedObject</span><span class="p">.</span><span class="n">transform</span><span class="p">.</span><span class="nf">Translate</span><span class="p">(</span><span class="n">Vector3</span><span class="p">.</span><span class="n">back</span> <span class="p">*</span> <span class="m">0.1f</span><span class="p">,</span> <span class="n">Space</span><span class="p">.</span><span class="n">World</span><span class="p">);</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">FocusedObject</span><span class="p">.</span><span class="n">name</span> <span class="p">==</span> <span class="s">"Brain_Part_02"</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="n">FocusedObject</span><span class="p">.</span><span class="n">transform</span><span class="p">.</span><span class="nf">Translate</span><span class="p">(</span><span class="n">Vector3</span><span class="p">.</span><span class="n">up</span> <span class="p">*</span> <span class="m">0.5f</span><span class="p">,</span> <span class="n">Space</span><span class="p">.</span><span class="n">World</span><span class="p">);</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">FocusedObject</span><span class="p">.</span><span class="n">name</span> <span class="p">==</span> <span class="s">"Brain_Part_05"</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="n">FocusedObject</span><span class="p">.</span><span class="n">transform</span><span class="p">.</span><span class="nf">Translate</span><span class="p">(</span><span class="n">Vector3</span><span class="p">.</span><span class="n">up</span> <span class="p">*</span> <span class="m">0.2f</span><span class="p">,</span> <span class="n">Space</span><span class="p">.</span><span class="n">World</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="p">}</span>
+<span class="k">else</span>
+<span class="p">{</span>
+<span class="c1">// If the raycast did not hit a hologram, clear the focused object.
+</span><span class="n">FocusedObject</span> <span class="p">=</span> <span class="k">null</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>If it has hit a game object, we can check whether the name is any of the names of the brain segments, and react accordingly by moving the segment into a predefined direction (left half goes back, right half goes forward, stem up, etc.</p>
+
+<p>Moreover, we can add a method for handling the highlighting to the Update routine of the class.</p>
+
+<div class="language-c# highlighter-rouge"><pre class="highlight"><code><span class="k">void</span> <span class="nf">Update</span><span class="p">()</span> <span class="p">{</span>
+<span class="nf">HoverHandler</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="k">void</span> <span class="nf">HoverHandler</span> <span class="p">()</span>
+<span class="p">{</span>
+
+<span class="n">GameObject</span> <span class="n">oldFocusObject</span> <span class="p">=</span> <span class="n">FocusedObject</span><span class="p">;</span>
+
+<span class="kt">var</span> <span class="n">headPosition</span> <span class="p">=</span> <span class="n">Camera</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">transform</span><span class="p">.</span><span class="n">position</span><span class="p">;</span>
+<span class="kt">var</span> <span class="n">gazeDirection</span> <span class="p">=</span> <span class="n">Camera</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">transform</span><span class="p">.</span><span class="n">forward</span><span class="p">;</span>
+<span class="n">RaycastHit</span> <span class="n">hitInfo</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">Physics</span><span class="p">.</span><span class="nf">Raycast</span><span class="p">(</span><span class="n">headPosition</span><span class="p">,</span> <span class="n">gazeDirection</span><span class="p">,</span> <span class="k">out</span> <span class="n">hitInfo</span><span class="p">))</span>
+<span class="p">{</span>
+<span class="c1">// If the raycast hit a hologram, use that as the focused object.
+</span><span class="n">FocusedObject</span> <span class="p">=</span> <span class="n">hitInfo</span><span class="p">.</span><span class="n">collider</span><span class="p">.</span><span class="n">gameObject</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">else</span>
+<span class="p">{</span>
+<span class="c1">// If the raycast did not hit a hologram, clear the focused object.
+</span><span class="n">FocusedObject</span> <span class="p">=</span> <span class="k">null</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// If the focused object changed this frame, add/remove highlight colour
+</span><span class="k">if</span> <span class="p">(</span><span class="n">FocusedObject</span> <span class="p">!=</span> <span class="n">oldFocusObject</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="kt">string</span><span class="p">[]</span> <span class="n">segs</span> <span class="p">=</span> <span class="p">{</span> <span class="s">"Brain_Part_02"</span><span class="p">,</span> <span class="s">"Brain_Part_04"</span><span class="p">,</span> <span class="s">"Brain_Part_05"</span><span class="p">,</span> <span class="s">"Brain_Part_06"</span> <span class="p">};</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">oldFocusObject</span> <span class="p">!=</span> <span class="k">null</span> <span class="p">&amp;&amp;</span> <span class="n">segs</span><span class="p">.</span><span class="nf">Any</span><span class="p">(</span><span class="n">oldFocusObject</span><span class="p">.</span><span class="n">name</span><span class="p">.</span><span class="n">Equals</span><span class="p">))</span>
+<span class="p">{</span>
+<span class="nf">RemoveHighlightFromSegment</span><span class="p">(</span><span class="n">oldFocusObject</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">FocusedObject</span> <span class="p">!=</span> <span class="k">null</span> <span class="p">&amp;&amp;</span> <span class="n">segs</span><span class="p">.</span><span class="nf">Any</span><span class="p">(</span><span class="n">FocusedObject</span><span class="p">.</span><span class="n">name</span><span class="p">.</span><span class="n">Equals</span><span class="p">))</span>
+<span class="p">{</span>
+<span class="nf">HighlightSegment</span><span class="p">(</span><span class="n">FocusedObject</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Again, the HoverHandler uses a ray cast to find out whether something (and what) has been hit by the ray cast from the position and orientation of the head-worn camera.
+If it is a brain seg-ment, and if this has not already been hit previously (in previous frames of the update loop), then the highlight and remove highlight routines will be called.</p>
+
+<div class="language-c# highlighter-rouge"><pre class="highlight"><code>
+<span class="k">public</span> <span class="k">void</span> <span class="nf">HighlightSegment</span><span class="p">(</span><span class="n">GameObject</span> <span class="n">Segment</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="n">OldColour</span> <span class="p">=</span> <span class="n">Segment</span><span class="p">.</span><span class="n">GetComponent</span><span class="p">&lt;</span><span class="n">Renderer</span><span class="p">&gt;().</span><span class="n">material</span><span class="p">.</span><span class="n">color</span><span class="p">;</span>
+<span class="n">Segment</span><span class="p">.</span><span class="n">GetComponent</span><span class="p">&lt;</span><span class="n">Renderer</span><span class="p">&gt;().</span><span class="n">material</span><span class="p">.</span><span class="n">color</span> <span class="p">=</span> <span class="n">Color</span><span class="p">.</span><span class="n">yellow</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">void</span> <span class="nf">RemoveHighlightFromSegment</span><span class="p">(</span><span class="n">GameObject</span> <span class="n">Segment</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="n">Segment</span><span class="p">.</span><span class="n">GetComponent</span><span class="p">&lt;</span><span class="n">Renderer</span><span class="p">&gt;().</span><span class="n">material</span><span class="p">.</span><span class="n">color</span> <span class="p">=</span> <span class="n">OldColour</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Those routines simply remember the colour in use of the brain segment (they all have the same colour, so no need to memorise more than one), and it replaces it with yellow for the highlight.</p>
+
+<p><img src="../../assets/figures/mapgazegesture/14 - highlight hover.jpg" alt="Highlight hover" /></p>
+
+<p><img src="../../assets/figures/mapgazegesture/14 - highlight on tapped.jpg" alt="OnTapped" /></p>
+
+<p>NOTE: The 3D brain model is from https://free3d.com/3d-model/brain-18357.html and free for personal use.
+The Placeable and GazeGestureManager behaviour scripts are from the Mi-crosoft Holoacademy Spatial Mapping tutorial.</p>
+
+  </div>
+
+</article>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">The Open Augmented Reality Teaching Book</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li>The Open Augmented Reality Teaching Book</li>
+          <li><a href="mailto:klamma@dbis.rwth-aachen.de">klamma@dbis.rwth-aachen.de</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          <li>
+            <a href="https://twitter.com/AR_FOR_EU"><span class="icon icon--twitter"><svg viewBox="0 0 16 16"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">AR_FOR_EU</span></a>
+
+          </li>
+          <li>
+            <a href="/ar-for-eu-book/feed.xml"><span class="icon icon-rss"><?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"> 
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="128px" height="128px" id="RSSicon" viewBox="0 0 256 256">
+<defs>
+<linearGradient x1="0.085" y1="0.085" x2="0.915" y2="0.915" id="RSSg">
+<stop  offset="0.0" stop-color="#E3702D"/><stop  offset="0.1071" stop-color="#EA7D31"/>
+<stop  offset="0.3503" stop-color="#F69537"/><stop  offset="0.5" stop-color="#FB9E3A"/>
+<stop  offset="0.7016" stop-color="#EA7C31"/><stop  offset="0.8866" stop-color="#DE642B"/>
+<stop  offset="1.0" stop-color="#D95B29"/>
+</linearGradient>
+</defs>
+<rect width="256" height="256" rx="55" ry="55" x="0"  y="0"  fill="#CC5D15"/>
+<rect width="246" height="246" rx="50" ry="50" x="5"  y="5"  fill="#F49C52"/>
+<rect width="236" height="236" rx="47" ry="47" x="10" y="10" fill="url(#RSSg)"/>
+<circle cx="68" cy="189" r="24" fill="#FFF"/>
+<path d="M160 213h-34a82 82 0 0 0 -82 -82v-34a116 116 0 0 1 116 116z" fill="#FFF"/>
+<path d="M184 213A140 140 0 0 0 44 73 V 38a175 175 0 0 1 175 175z" fill="#FFF"/>
+</svg>
+</span><span class="username">Subscribe</span></a>
+
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        <p>The Open Augmented Reality Teaching Book</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+    <!-- load visualizations (at the end so that the div elements are known here) -->
+    
+  </body>
+
+</html>
